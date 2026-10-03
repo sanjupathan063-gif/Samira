@@ -59,7 +59,7 @@ jobs:
         run: chmod +x android/gradlew
 
       - name: Verify native patch inputs
-        run: test -f native-patches/AccessibilityControlPlugin.java && test -f native-patches/SanjuAccessibilityService.java && test -f native-patches/res/xml/sanju_accessibility_config.xml
+        run: test -f native-patches/AccessibilityControlPlugin.java && test -f native-patches/SanjuAccessibilityService.java && test -f native-patches/res/xml/sanju_accessibility_config.xml && test -f native-patches/res/values/sanju_strings.xml
 
       - name: Build debug APK
         working-directory: android

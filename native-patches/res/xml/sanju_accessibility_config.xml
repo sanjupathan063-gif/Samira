@@ -4,4 +4,4 @@
     android:accessibilityFeedbackType="feedbackGeneric"
     android:notificationTimeout="100"
     android:canRetrieveWindowContent="true"
-    android:description="SANJU system navigation and scroll controls" />
+    android:description="@string/sanju_accessibility_description" />

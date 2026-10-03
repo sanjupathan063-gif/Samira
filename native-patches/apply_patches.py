@@ -15,6 +15,9 @@ def copy_resources():
     dest=ROOT/'android'/'app'/'src'/'main'/'res'/'xml'
     dest.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(PATCH_DIR/'res'/'xml'/'sanju_accessibility_config.xml', dest/'sanju_accessibility_config.xml')
+    vdest=ROOT/'android'/'app'/'src'/'main'/'res'/'values'
+    vdest.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(PATCH_DIR/'res'/'values'/'sanju_strings.xml', vdest/'sanju_strings.xml')
 
 def patch_manifest():
     text=MANIFEST_PATH.read_text(encoding='utf-8')
