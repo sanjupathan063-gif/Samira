@@ -653,10 +653,27 @@
     }; reader.readAsDataURL(file);
   }
 
+  let lastWakeKey = "", lastWakeAt = 0;
   async function handleWakeCommand(command){
     const text=String(command||"").trim();
+    const now=Date.now();
+    if(now-lastWakeAt<4000 && text===lastWakeKey) return; // same event can arrive via 3 paths
+    lastWakeAt=now; lastWakeKey=text;
+    try{ if(WakeWord && WakeWord.getPending) WakeWord.getPending().catch(()=>{}); }catch(_){}
     if(text){ await handleUserInput(text); }
-    else { addMessage("bot","আমি শুনছি বস। কী করতে হবে বলো।"); speak("আমি শুনছি বস, কী করতে হবে বলো"); }
+    else {
+      addMessage("bot","\u0986\u09AE\u09BF \u09B6\u09C1\u09A8\u099B\u09BF \u09AC\u09B8\u0964 \u0995\u09C0 \u0995\u09B0\u09BE\u09B0 \u0986\u099B\u09C7 \u09AC\u09B2\u09CB\u0964");
+      speak("\u0986\u09AE\u09BF \u09B6\u09C1\u09A8\u099B\u09BF \u09AC\u09B8, \u0995\u09C0 \u0995\u09B0\u09BE\u09B0 \u0986\u099B\u09C7 \u09AC\u09B2\u09CB");
+      setTimeout(()=>{ if(!isRecording) startListening(); }, 1800); // actually listen for the command
+    }
+  }
+
+  // The wake-word recognizer and the in-app mic cannot share the microphone.
+  async function wakePause(){
+    try{ if(settings.wakeEnabled && WakeWord && WakeWord.pause){ await WakeWord.pause(); await new Promise(r=>setTimeout(r,300)); } }catch(_){}
+  }
+  async function wakeResume(){
+    try{ if(settings.wakeEnabled && WakeWord && WakeWord.resume) await WakeWord.resume(); }catch(_){}
   }
 
   async function setWakeEnabled(on){
@@ -1716,6 +1733,7 @@
     isRecording = true;
     micBtn.classList.add("recording");
     setOrbState("শুনছি...", "listening");
+    await wakePause();
 
     const lang = settings.voiceLang && settings.voiceLang !== "auto" ? settings.voiceLang : "bn-BD";
 
@@ -1748,6 +1766,7 @@
       addMessage("bot", "ভয়েস শুনতে সমস্যা হলো, আবার চেষ্টা করো।");
     } finally {
       isRecording = false;
+      wakeResume();
       micBtn.classList.remove("recording");
       setOrbState("প্রস্তুত আছি", "idle");
     }
@@ -1943,6 +1962,14 @@
         ["Network",navigator.onLine,"Current network state"],
         ["Capacitor",Boolean(window.Capacitor),"Native bridge"]
       ]; diag.innerHTML=rows.map(r=>`<div class="diag-row"><div><strong>${r[0]}</strong><small>${r[2]}</small></div><span class="${r[1]?"diag-ok":"diag-bad"}">${r[1]?"OK":"CHECK"}</span></div>`).join("");}
+      if(diag && window.__sanjuWakeSelfHeal){
+        window.__sanjuWakeSelfHeal().then(st=>{
+          if(!st) return;
+          const ok=!st.error && st.running && !(st.failures>=3);
+          const detail=st.error ? ("Error: "+st.error) : ("running="+st.running+" | mode="+(st.strategy||"-")+" | lastError="+st.lastError+" | heard: "+(st.lastHeard||"-")+(st.healed?(" | "+st.healed):""));
+          diag.insertAdjacentHTML("beforeend",`<div class="diag-row"><div><strong>Wake Word (auto-heal)</strong><small>${escapeHtml(detail)}</small></div><span class="${ok?"diag-ok":"diag-bad"}">${ok?"OK":"CHECK"}</span></div>`);
+        }).catch(()=>{});
+      }
     }
     function openSelfUpgrade(){renderSelfUpgrade();openModal("selfUpgradeModal");}
     function bindSelfUpgrade(){
@@ -2176,9 +2203,25 @@
     // Wake Word foreground service
     if(WakeWord){
       WakeWord.addListener && WakeWord.addListener("wake", ev=>{ setMasterState("WAKE WORD DETECTED"); handleWakeCommand(ev?.command||""); });
-      WakeWord.getPending && WakeWord.getPending().then(r=>{ if(r?.command) handleWakeCommand(r.command); }).catch(()=>{});
+      WakeWord.getPending && WakeWord.getPending().then(r=>{ if(r?.found) handleWakeCommand(r.command||""); }).catch(()=>{});
       if(settings.wakeEnabled) setWakeEnabled(true);
     }
+    // MainActivity.onNewIntent dispatches this DOM event when the app is brought to front by a wake word
+    window.addEventListener("sanjuWake", ev=>{ setMasterState("WAKE WORD DETECTED"); handleWakeCommand(ev?.detail?.command||""); });
+    document.addEventListener("visibilitychange", ()=>{
+      if(!document.hidden && WakeWord && WakeWord.getPending) WakeWord.getPending().then(r=>{ if(r?.found) handleWakeCommand(r.command||""); }).catch(()=>{});
+    });
+    // Self-heal watchdog: if the wake service died (battery saver, OS kill) restart it automatically
+    async function wakeSelfHeal(){
+      if(!settings.wakeEnabled || !WakeWord || !WakeWord.status) return null;
+      try{
+        const st=await WakeWord.status();
+        if(!st.running){ await WakeWord.start({phrase:settings.wakePhrase||"Hey Sanju"}); st.healed="service restarted automatically"; }
+        return st;
+      }catch(e){ return {error:String((e&&e.message)||e)}; }
+    }
+    window.__sanjuWakeSelfHeal = wakeSelfHeal;
+    setInterval(wakeSelfHeal, 60000);
     const ws=$("wakeState"); if(ws) ws.textContent=settings.wakeEnabled?"চালু":"বন্ধ";
   }
 

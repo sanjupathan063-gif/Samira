@@ -50,8 +50,8 @@ jobs:
           p = Path("android/app/build.gradle")
           s = p.read_text()
           import re
-          s = re.sub(r'versionCode\s+\d+', 'versionCode 331', s)
-          s = re.sub(r'versionName\s+"[^"]+"', 'versionName "3.3.1"', s)
+          s = re.sub(r'versionCode\s+\d+', 'versionCode 332', s)
+          s = re.sub(r'versionName\s+"[^"]+"', 'versionName "3.3.2"', s)
           p.write_text(s)
           PY
 
