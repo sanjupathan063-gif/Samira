@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+<title>SANJU AI 3.1 — Neural Core</title>
+<link rel="stylesheet" href="style.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="hud-grid"></div>
+  <div class="hud-scanline"></div>
+  <div class="hud-vignette"></div>
+
+  <div class="app">
+
+    <!-- Top bar -->
+    <header class="topbar">
+      <button class="icon-btn" id="menuBtn" aria-label="Menu">
+        <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+      <div class="brand">SANJU</div>
+      <div class="topbar-right">
+        <button class="icon-btn" id="bellBtn" aria-label="Notifications">
+          <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="dot"></span>
+        </button>
+        <div class="avatar">S</div>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <!-- FUTURE NEURAL CORE -->
+      <section class="neural-dashboard">
+        <div class="neural-topline"><span class="neural-shield">◈</span><span>NEURAL CORE</span><b id="bridgeStatus">6 / 6 BRIDGES ACTIVE</b></div>
+        <div class="neural-hero">
+          <div class="neural-orbit no1"></div><div class="neural-orbit no2"></div><div class="neural-orbit no3"></div>
+          <div class="neural-core-logo"><span>✦</span></div>
+          <h2>SANJU NEURAL CORE</h2><p>AUTONOMOUS COMPANION</p>
+          <div class="neural-state"><i></i><span id="masterState">MASTER AGENT READY</span></div>
+        </div>
+        <div class="neural-tools">
+          <button data-neural-action="wake"><span>◉</span><strong>Wake Word</strong><small id="wakeState">বন্ধ</small></button>
+          <button data-neural-action="vision"><span>◌</span><strong>Vision</strong><small>Camera + Image</small></button>
+          <button data-neural-action="web"><span>⌁</span><strong>Live Web</strong><small>Search + Weather</small></button>
+          <button data-neural-action="home"><span>⌂</span><strong>Smart Home</strong><small>Home Assistant</small></button>
+        </div>
+        <div class="master-task"><span class="master-dot"></span><span>একটা কাজ বলো — SANJU নিজেই ঠিক করবে কোন tool লাগবে</span></div>
+      </section>
+
+      <!-- Greeting -->
+      <section class="greeting">
+        <p class="hello" id="greetingText">শুভ সন্ধ্যা,</p>
+        <h1 class="username" id="userName">বস</h1>
+        <p class="status" id="statusLine">প্রস্তুত আছি</p>
+      </section>
+
+      <div class="energy-pill" id="energyPill">
+        <svg viewBox="0 0 24 24" class="bolt"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+        <span id="energyLabel">অনলাইন</span>
+      </div>
+
+      <!-- Orb -->
+      <section class="orb-wrap">
+        <div class="orb reticle idle" id="orb" role="button" aria-label="সাঞ্জু — ট্যাপ করে কথা বলো">
+          <div class="orb-halo"></div>
+          <div class="orb-ripple r1"></div>
+          <div class="orb-ripple r2"></div>
+
+          <svg class="orb-dial" viewBox="0 0 260 260" aria-hidden="true">
+            <!-- বাইরের টিক-মার্ক ডায়াল -->
+            <g class="dial-a">
+              <circle class="d-ticks" cx="130" cy="130" r="124" pathLength="240"/>
+              <circle class="d-major" cx="130" cy="130" r="124" pathLength="240"/>
+            </g>
+            <!-- সেগমেন্টেড সায়ান আর্ক -->
+            <g class="dial-b">
+              <circle class="d-seg" cx="130" cy="130" r="113" pathLength="100"/>
+            </g>
+            <!-- ম্যাজেন্টা স্ক্যানার আর্ক -->
+            <g class="dial-c">
+              <circle class="d-scan" cx="130" cy="130" r="103" pathLength="100"/>
+            </g>
+            <circle class="d-track" cx="130" cy="130" r="94"/>
+            <!-- চার দিকের মার্কার -->
+            <g class="d-marks">
+              <path d="M130 2 l4.5 8 h-9z"/>
+              <path d="M130 2 l4.5 8 h-9z" transform="rotate(90 130 130)"/>
+              <path d="M130 2 l4.5 8 h-9z" transform="rotate(180 130 130)"/>
+              <path d="M130 2 l4.5 8 h-9z" transform="rotate(270 130 130)"/>
+            </g>
+          </svg>
+
+          <div class="orb-orbit o1"><i></i></div>
+          <div class="orb-orbit o2"><i></i></div>
+          <div class="orb-orbit o3"><i></i></div>
+
+          <div class="orb-core">
+            <div class="orb-plasma"></div>
+            <div class="orb-grid"></div>
+            <div class="orb-gloss"></div>
+            <div class="orb-content">
+              <span class="eyebrow">AI ASSISTANT</span>
+              <span class="wordmark">S.A.N.J.U</span>
+              <div class="waveform" id="waveform">
+                <span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+              </div>
+              <span class="orb-state" id="orbState">প্রস্তুত আছি</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quick actions -->
+      <section class="quick-row">
+        <button class="quick-btn" id="selfUpgradeBtn" data-action="self-upgrade">
+          <svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="9"/></svg>
+          Self Upgrade
+        </button>
+        <button class="quick-btn" data-action="phone">
+          <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          ফোন কন্ট্রোল
+        </button>
+        <button class="quick-btn" data-action="notes">
+          <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          নোট
+        </button>
+        <button class="quick-btn" data-action="settings">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          সেটিংস
+        </button>
+      </section>
+
+      <!-- Status cards -->
+      <section class="card-row">
+        <div class="stat-card">
+          <div class="stat-head"><svg viewBox="0 0 24 24"><rect x="1" y="6" width="18" height="12" rx="2"/><line x1="23" y1="13" x2="23" y2="11"/></svg>ব্যাটারি</div>
+          <div class="stat-value" id="batteryValue">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-head"><svg viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>নেটওয়ার্ক</div>
+          <div class="stat-value" id="networkValue">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-head"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>মুড</div>
+          <div class="stat-value" id="moodValue">ভালো</div>
+        </div>
+      </section>
+
+      <!-- SANJU Agent Mode -->
+      <section class="agent-panel" aria-label="SANJU Agent Mode">
+        <div class="agent-head"><span class="agent-icon">✦</span><div><h2>Agent Mode</h2><p>কাজ বলো → পরিকল্পনা দেখো → অনুমতি দিয়ে চালাও</p></div><span class="agent-badge">BETA</span></div>
+        <div class="agent-input-row"><input id="agentInput" type="text" placeholder="যেমন: YouTube খোলো / ৫ মিনিট পরে পানি খেতে মনে করিও" autocomplete="off"/><button id="agentPlanBtn">Plan</button></div>
+        <div class="agent-examples"><button data-agent-example="YouTube খোলো">YouTube খোলো</button><button data-agent-example="নোট: কাল বই পড়ব">নোট রাখো</button><button data-agent-example="৫ মিনিট পরে পানি খেতে মনে করিও">রিমাইন্ডার</button></div>
+        <div id="agentPlan" class="agent-plan" hidden></div>
+        <p class="agent-safety">🔐 কল, SMS বা সংবেদনশীল কাজ অনুমতি ছাড়া চালানো হবে না।</p><div id="master-router-live" class="master-router-live">◈ MASTER ROUTER • LOCAL TOOLS READY • AI FALLBACK READY</div>
+      </section>
+
+      <!-- Chat log -->
+      <section class="chat-log" id="chatLog" aria-live="polite"></section>
+
+    </main>
+
+    <!-- Input bar -->
+    <div class="input-bar">
+      <button class="icon-btn small" id="attachBtn" aria-label="Attach">
+        <svg viewBox="0 0 24 24"><path d="M21.44 11.05 12.25 20.24a5.5 5.5 0 0 1-7.78-7.78l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95L9.41 17.42a1.5 1.5 0 0 1-2.12-2.12l8.49-8.49"/></svg>
+      </button>
+      <input type="text" id="chatInput" placeholder="সাঞ্জুকে কিছু জিজ্ঞেস করুন..." autocomplete="off" />
+      <button class="icon-btn small send" id="sendBtn" aria-label="Send">
+        <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+
+    <!-- Bottom nav -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-tab="home">
+        <svg viewBox="0 0 24 24"><path d="M3 12l9-9 9 9"/><path d="M9 21V12h6v9"/><path d="M5 10v11h14V10"/></svg>
+        <span>হোম</span>
+      </button>
+      <button class="nav-item" data-tab="agents">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/><path d="M2 20v-1a4 4 0 0 1 4-4h1M22 20v-1a4 4 0 0 1-4-4h-1"/><circle cx="5" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+        <span>এজেন্ট</span>
+      </button>
+      <button class="mic-btn" id="micBtn" aria-label="Voice">
+        <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>
+      </button>
+      <button class="nav-item" data-tab="memories">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span>স্মৃতি</span>
+      </button>
+      <button class="nav-item" data-tab="chat">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>চ্যাট</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- Settings modal -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal reticle">
+      <h2>সেটিংস</h2>
+      <p class="settings-scroll-hint">⬍ নিচে স্ক্রল করে সব API key ও অপশন দেখা যাবে • সেভ করলে এই স্ক্রিন বন্ধ হবে না</p>
+      <label for="apiKeyInput">Groq API Key</label>
+      <input type="password" id="apiKeyInput" placeholder="gsk_..." />
+      <label for="nameInput">আপনার নাম</label>
+      <input type="text" id="nameInput" placeholder="বস" />
+      <label for="modelInput">Groq মডেল</label>
+      <input type="text" id="modelInput" placeholder="openai/gpt-oss-120b" />
+      <label for="voiceLangSelect">কথা বলার ভাষা (TTS)</label>
+      <select id="voiceLangSelect">
+        <option value="auto">স্বয়ংক্রিয় (যা বলা হচ্ছে সেই ভাষায়)</option>
+        <option value="bn-BD">বাংলা</option>
+        <option value="hi-IN">হিন্দি</option>
+        <option value="en-IN">ইংরেজি</option>
+      </select>
+      <label for="voiceStyleSelect">SANJU voice style</label>
+      <select id="voiceStyleSelect"><option value="cinematic">Cinematic</option><option value="robotic">Robotic</option><option value="human">Human</option></select>
+      <label for="geminiKeyInput">Gemini API Key (সাঞ্জুর কণ্ঠস্বরের জন্য)</label>
+      <input type="password" id="geminiKeyInput" placeholder="AI...  (aistudio.google.com থেকে নাও)" />
+      <label for="youtubeKeyInput">YouTube Data API Key (ঐচ্ছিক — ভিডিও সার্চের জন্য)</label>
+      <input type="password" id="youtubeKeyInput" placeholder="খালি রাখলে শুধু সার্চ পেজ খুলবে" />
+      <label class="setting-check"><input type="checkbox" id="wakeEnabledInput" /> <span>Hey Sanju / Hey Jarvis background wake word চালু</span></label>
+      <label for="wakePhraseInput">Wake phrase</label>
+      <input type="text" id="wakePhraseInput" placeholder="Hey Sanju" />
+      <label for="haUrlInput">Home Assistant URL (ঐচ্ছিক)</label>
+      <input type="url" id="haUrlInput" placeholder="http://homeassistant.local:8123" />
+      <label for="haTokenInput">Home Assistant Long-Lived Token</label>
+      <input type="password" id="haTokenInput" placeholder="eyJ..." />
+      <label for="haLightInput">Default Light entity_id</label>
+      <input type="text" id="haLightInput" placeholder="light.living_room" />
+      <label for="haFanInput">Default Fan entity_id</label>
+      <input type="text" id="haFanInput" placeholder="fan.ceiling" />
+      <label for="haAcInput">Default AC entity_id</label>
+      <input type="text" id="haAcInput" placeholder="climate.bedroom" />
+      <p class="hint-text">Wake word normal background অবস্থায় foreground microphone service দিয়ে চলে। Android-এর force-stop/কিছু battery saver অবস্থায় OS এটিকে থামাতে পারে।</p>
+      <div class="modal-actions">
+        <button class="btn ghost" id="closeSettings">বাতিল</button>
+        <button class="btn primary" id="saveSettings">সেভ করুন</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notes modal -->
+  <div class="modal-overlay" id="notesModal">
+    <div class="modal reticle">
+      <h2>নোট</h2>
+      <div class="list-box" id="notesList"></div>
+      <div class="add-row">
+        <input type="text" id="noteInput" placeholder="নতুন নোট লিখো..." />
+        <button class="btn primary small-btn" id="addNoteBtn">যোগ করো</button>
+      </div>
+      <div class="modal-actions">
+        <button class="btn ghost" id="closeNotes">বন্ধ করো</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Memories modal -->
+  <div class="modal-overlay" id="memoriesModal">
+    <div class="modal reticle">
+      <h2>স্মৃতি</h2>
+      <p class="hint-text">এখানে যা লিখবে, সাঞ্জু সবসময় মনে রাখবে (যেমন তোমার পছন্দ, জন্মদিন, অভ্যাস)।</p>
+      <div class="list-box" id="memoriesList"></div>
+      <div class="add-row">
+        <input type="text" id="memoryInput" placeholder="যেমন: আমার জন্মদিন ১২ মার্চ" />
+        <button class="btn primary small-btn" id="addMemoryBtn">যোগ করো</button>
+      </div>
+      <div class="modal-actions">
+        <button class="btn ghost" id="closeMemories">বন্ধ করো</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scan HUD overlay -->
+  <div class="hud-overlay" id="scanModal">
+    <div class="hud">
+      <div class="hud-radar">
+        <div class="hud-radar-sweep"></div>
+        <div class="hud-radar-ring"></div>
+        <div class="hud-radar-ring r2"></div>
+        <div class="hud-center">SYSTEM<br/>SCAN</div>
+      </div>
+      <div class="hud-log" id="hudLog"></div>
+      <button class="btn ghost" id="closeScan">বন্ধ করো</button>
+    </div>
+  </div>
+
+
+  <!-- ═══ AGENTS HUB ═══ -->
+  <div class="hud-overlay" id="agentsHub">
+    <div class="agents-hub">
+      <div class="agents-hub-header">
+        <div class="agents-hub-title">
+          <div class="hub-icon-wrap">🤖</div>
+          <div>
+            <h2>Multi-Agent AI</h2>
+            <p>স্বয়ংক্রিয় পাইপলাইন সিস্টেম</p>
+          </div>
+        </div>
+        <button class="icon-btn" id="closeAgentsHub">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="agent-systems-grid">
+        <div class="agent-sys-card" style="--ac:#00e5ff"><div class="sys-glow"></div><div class="sys-card-top"><span class="sys-icon">🧠</span><span class="sys-count">৫ এজেন্ট</span></div><h3>Master Orchestrator</h3><p>Intent → Plan → Tools → Execute → Verify</p><button class="sys-launch-btn" data-system="master">চালাও →</button></div>
+        <div class="agent-sys-card" style="--ac:#00ff88"><div class="sys-glow"></div><div class="sys-card-top"><span class="sys-icon">📱</span><span class="sys-count">৫ এজেন্ট</span></div><h3>Phone & Device</h3><p>Apps → Calls → SMS → Media → Settings</p><button class="sys-launch-btn" data-system="phone">চালাও →</button></div>
+        <div class="agent-sys-card" style="--ac:#b400ff"><div class="sys-glow"></div><div class="sys-card-top"><span class="sys-icon">🔬</span><span class="sys-count">৫ এজেন্ট</span></div><h3>Research & Fact Check</h3><p>Question → Evidence → Verify → Synthesize → Report</p><button class="sys-launch-btn" data-system="research">চালাও →</button></div>
+        <div class="agent-sys-card" style="--ac:#ff8a00"><div class="sys-glow"></div><div class="sys-card-top"><span class="sys-icon">💻</span><span class="sys-count">৫ এজেন্ট</span></div><h3>Developer</h3><p>Analyze → Debug → Secure → Optimize → Test</p><button class="sys-launch-btn" data-system="code">চালাও →</button></div>
+        <div class="agent-sys-card" style="--ac:#00d4ff"><div class="sys-glow"></div><div class="sys-card-top"><span class="sys-icon">👁️</span><span class="sys-count">৫ এজেন্ট</span></div><h3>Vision & Media</h3><p>Describe → Inspect → Extract → Reason → Summarize</p><button class="sys-launch-btn" data-system="vision">চালাও →</button></div>
+        <div class="agent-sys-card" style="--ac:#ff3cac"><div class="sys-glow"></div><div class="sys-card-top"><span class="sys-icon">📂</span><span class="sys-count">৫ এজেন্ট</span></div><h3>Files & Knowledge</h3><p>Find → Read → Organize → Transform → Index</p><button class="sys-launch-btn" data-system="files">চালাও →</button></div>
+        <div class="agent-sys-card" style="--ac:#7cff00"><div class="sys-glow"></div><div class="sys-card-top"><span class="sys-icon">⚡</span><span class="sys-count">৫ এজেন্ট</span></div><h3>Automation</h3><p>Trigger → Schedule → Execute → Monitor → Recover</p><button class="sys-launch-btn" data-system="automation">চালাও →</button></div>
+        <div class="agent-sys-card" style="--ac:#ff3366"><div class="sys-glow"></div><div class="sys-card-top"><span class="sys-icon">🛡️</span><span class="sys-count">৫ এজেন্ট</span></div><h3>Security & Privacy</h3><p>Threat → Risk → Protect → Audit → Recover</p><button class="sys-launch-btn" data-system="security">চালাও →</button></div>
+        <div class="agent-sys-card" style="--ac:#00ffa6"><div class="sys-glow"></div><div class="sys-card-top"><span class="sys-icon">📊</span><span class="sys-count">৫ এজেন্ট</span></div><h3>Data Analyst</h3><p>Import → Clean → Analyze → Visualize → Explain</p><button class="sys-launch-btn" data-system="data">চালাও →</button></div>
+        <div class="agent-sys-card" style="--ac:#ffe600"><div class="sys-glow"></div><div class="sys-card-top"><span class="sys-icon">🌐</span><span class="sys-count">৫ এজেন্ট</span></div><h3>Language</h3><p>Detect → Translate → Rewrite → Localize → Polish</p><button class="sys-launch-btn" data-system="language">চালাও →</button></div>
+        <div class="agent-sys-card" style="--ac:#8b5cf6"><div class="sys-glow"></div><div class="sys-card-top"><span class="sys-icon">🖥️</span><span class="sys-count">৫ এজেন্ট</span></div><h3>System Monitor</h3><p>Battery → Network → Storage → Apps → Diagnostics</p><button class="sys-launch-btn" data-system="system">চালাও →</button></div>
+        <div class="agent-sys-card" style="--ac:#00e5ff"><div class="sys-glow"></div><div class="sys-card-top"><span class="sys-icon">✍️</span><span class="sys-count">৫ এজেন্ট</span></div><h3>Content Creation</h3><p>Topic → Plan → Write → Edit → Publish</p><button class="sys-launch-btn" data-system="content">চালাও →</button></div>
+        <div class="agent-sys-card" style="--ac:#ff2d78"><div class="sys-glow"></div><div class="sys-card-top"><span class="sys-icon">🎧</span><span class="sys-count">৫ এজেন্ট</span></div><h3>Customer Support</h3><p>Issue → Triage → Solve → QA → Respond</p><button class="sys-launch-btn" data-system="support">চালাও →</button></div>
+      </div>
+      <div class="agent-history-box">
+        <div class="history-head-row">
+          <span>📋 সাম্প্রতিক রান</span>
+          <button id="clearAgentHistory" class="clear-hist-btn">মুছো</button>
+        </div>
+        <div id="agentHistoryList" class="agent-hist-list">
+          <p class="empty-hint">এখনো কোনো রান নেই।</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ AGENT RUNNER (full screen) ═══ -->
+  <div class="hud-overlay" id="agentRunner">
+    <div class="agent-runner">
+      <div class="runner-header">
+        <button class="icon-btn" id="backToHub">
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div class="runner-title-row">
+          <span id="runnerIcon">✍️</span>
+          <span id="runnerName">Content Creation</span>
+        </div>
+        <button class="icon-btn" id="cancelRun">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <!-- Input Section -->
+      <div id="runnerInputSection" class="runner-section">
+        <label class="runner-label" id="runnerInputLabel">কাজের বিবরণ দাও</label>
+        <textarea id="agentTaskInput" class="task-textarea" rows="4" placeholder="এখানে বিস্তারিত লেখো..."></textarea>
+        <div id="improvementBadge" class="improve-badge hidden">
+          <span>⚡</span><span id="improveBadgeText">আগের অভিজ্ঞতা কাজে লাগাবো</span>
+        </div>
+        <button class="run-btn" id="runPipelineBtn">🚀 পাইপলাইন শুরু করো</button>
+      </div>
+
+      <!-- Pipeline Progress -->
+      <div id="pipelineSection" class="runner-section hidden">
+        <div class="pipeline-header">
+          <span id="pipelineStatusText">⏳ চলছে...</span>
+          <span id="pipelineProgress">০/৫</span>
+        </div>
+        <div id="pipelineSteps" class="pipeline-steps"></div>
+        <button id="stopPipelineBtn" class="stop-btn">⛔ থামাও</button>
+      </div>
+
+      <!-- Output Section -->
+      <div id="outputSection" class="runner-section hidden">
+        <div class="out-tabs">
+          <button class="out-tab active" data-out="summary">📝 সারসংক্ষেপ</button>
+          <button class="out-tab" data-out="detailed">📋 বিস্তারিত</button>
+          <button class="out-tab" data-out="agents">🤖 এজেন্ট লগ</button>
+        </div>
+        <div id="outputContent" class="out-content"></div>
+        <div class="out-actions">
+          <button id="copyOutputBtn" class="act-btn">📋 কপি</button>
+          <button id="saveOutputBtn" class="act-btn">💾 সেভ</button>
+          <button id="shareOutputBtn" class="act-btn">📤 শেয়ার</button>
+        </div>
+        <div class="feedback-row">
+          <span>এই রান কেমন হলো?</span>
+          <button id="feedbackGood" class="fb-btn good">👍 ভালো</button>
+          <button id="feedbackBad" class="fb-btn bad">👎 খারাপ</button>
+        </div>
+        <button class="run-btn secondary" id="runAgainBtn">🔄 আবার চালাও</button>
+      </div>
+    </div>
+  </div>
+
+  <input id="visionPicker" type="file" accept="image/*" capture="environment" hidden />
+  <input id="filePicker" type="file" accept="image/*,.txt,.md,.json,.csv,.pdf" hidden />
+  <script src="app.js"></script>
+
+  <div class="modal-overlay" id="selfUpgradeModal">
+    <div class="modal-card self-upgrade-card">
+      <div class="modal-head"><div><span class="eyebrow">SELF-EVOLVING CORE</span><h2>SANJU Self Upgrade</h2></div><button class="icon-btn" id="closeSelfUpgrade" aria-label="Close">✕</button></div>
+      <p class="upgrade-intro">বলুন: “আমার মধ্যে Calculator skill অ্যাড করো”। SANJU অনুমোদিত action-ভিত্তিক skill registry-তে নতুন skill সংরক্ষণ করবে।</p>
+      <div class="upgrade-input-row"><input id="skillRequestInput" type="text" placeholder="যে skill যোগ করতে চান…" autocomplete="off"><button id="addSkillBtn">ADD</button></div>
+      <div id="skillUpgradeMessage" class="upgrade-message" hidden></div>
+      <div class="upgrade-actions"><button id="runDiagnosticsBtn">🛠️ Self Diagnostic</button><button id="refreshSkillsBtn">↻ Refresh</button></div>
+      <h3>🧠 Installed Skills</h3><div id="skillList" class="skill-list"></div>
+      <h3>🛡️ System Health</h3><div id="diagnosticList" class="diagnostic-list"></div>
+      <small class="upgrade-note">নিরাপত্তার জন্য SANJU নিজে থেকে arbitrary native code execute করবে না। নতুন capability approved skill/action হিসেবে যোগ হবে।</small>
+    </div>
+  </div>
+</body>
+</html>
