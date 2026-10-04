@@ -668,9 +668,12 @@
     }
   }
 
+  function wakeOpts(){
+    return {phrase:settings.wakePhrase||"Hey Sanju", silent:settings.beepOff!==false, slow:!!settings.wakeSlow};
+  }
   // The wake-word recognizer and the in-app mic cannot share the microphone.
   async function wakePause(){
-    try{ if(settings.wakeEnabled && WakeWord && WakeWord.pause){ await WakeWord.pause(); await new Promise(r=>setTimeout(r,300)); } }catch(_){}
+    try{ if(settings.wakeEnabled && WakeWord && WakeWord.pause){ await WakeWord.pause(); await new Promise(r=>setTimeout(r,700)); } }catch(_){}
   }
   async function wakeResume(){
     try{ if(settings.wakeEnabled && WakeWord && WakeWord.resume) await WakeWord.resume(); }catch(_){}
@@ -680,7 +683,7 @@
     settings.wakeEnabled=!!on; saveSettings();
     if(!WakeWord){ const el=$("wakeState"); if(el) el.textContent="Native wake unavailable"; return; }
     try{
-      if(on){ await WakeWord.requestPermission(); await WakeWord.start({phrase:settings.wakePhrase||"Hey Sanju"}); }
+      if(on){ await WakeWord.requestPermission(); await WakeWord.start(wakeOpts()); }
       else await WakeWord.stop();
       const el=$("wakeState"); if(el) el.textContent=on?"চালু":"বন্ধ";
     }catch(e){ settings.wakeEnabled=false; saveSettings(); const el=$("wakeState"); if(el) el.textContent="বন্ধ"; addMessage("bot","Wake Word চালু করা যায়নি। Microphone permission ও battery restriction পরীক্ষা করো।"); }
@@ -2091,6 +2094,9 @@
       settings.geminiTtsKey = $("geminiKeyInput").value.trim();
       settings.youtubeKey = $("youtubeKeyInput").value.trim();
       settings.wakeEnabled = $("wakeEnabledInput")?.checked || false;
+      settings.beepOff = $("beepOffInput") ? $("beepOffInput").checked : true;
+      settings.wakeSlow = $("wakeSlowInput") ? $("wakeSlowInput").checked : false;
+      settings.autoHeal = $("autoHealInput") ? $("autoHealInput").checked : true;
       settings.wakePhrase = $("wakePhraseInput")?.value.trim() || "Hey Sanju";
       settings.homeAssistantUrl = $("haUrlInput")?.value.trim() || "";
       settings.homeAssistantToken = $("haTokenInput")?.value.trim() || "";
@@ -2099,6 +2105,8 @@
       settings.haAcEntity = $("haAcInput")?.value.trim() || "";
       saveSettings();
       setWakeEnabled(settings.wakeEnabled);
+      try{ if(WakeWord && WakeWord.configure) WakeWord.configure({silent:settings.beepOff!==false, slow:!!settings.wakeSlow}); }catch(_){}
+      try{ window.dispatchEvent(new CustomEvent("sanjuSettingsChanged")); }catch(_){}
       setGreeting();
       closeModal("settingsModal");
     });
@@ -2150,6 +2158,9 @@
     $("geminiKeyInput").value = settings.geminiTtsKey || "";
     $("youtubeKeyInput").value = settings.youtubeKey || "";
     if($("wakeEnabledInput")) $("wakeEnabledInput").checked = !!settings.wakeEnabled;
+    if($("beepOffInput")) $("beepOffInput").checked = settings.beepOff !== false;
+    if($("wakeSlowInput")) $("wakeSlowInput").checked = !!settings.wakeSlow;
+    if($("autoHealInput")) $("autoHealInput").checked = settings.autoHeal !== false;
     if($("wakePhraseInput")) $("wakePhraseInput").value = settings.wakePhrase || "Hey Sanju";
     if($("haUrlInput")) $("haUrlInput").value = settings.homeAssistantUrl || "";
     if($("haTokenInput")) $("haTokenInput").value = settings.homeAssistantToken || "";
@@ -2216,7 +2227,7 @@
       if(!settings.wakeEnabled || !WakeWord || !WakeWord.status) return null;
       try{
         const st=await WakeWord.status();
-        if(!st.running){ await WakeWord.start({phrase:settings.wakePhrase||"Hey Sanju"}); st.healed="service restarted automatically"; }
+        if(!st.running){ await WakeWord.start(wakeOpts()); st.healed="service restarted automatically"; }
         return st;
       }catch(e){ return {error:String((e&&e.message)||e)}; }
     }
@@ -2224,6 +2235,24 @@
     setInterval(wakeSelfHeal, 60000);
     const ws=$("wakeState"); if(ws) ws.textContent=settings.wakeEnabled?"চালু":"বন্ধ";
   }
+
+  // sanju-core.js এই bridge দিয়ে মূল অ্যাপের সাথে কথা বলে
+  window.__sanjuApp = {
+    getSettings: () => settings,
+    saveSettings: () => saveSettings(),
+    setWakeEnabled: (on) => setWakeEnabled(on),
+    wakeOpts: () => wakeOpts(),
+    addMessage: (...a) => addMessage(...a),
+    speak: (t) => speak(t),
+    setMasterState: (t) => setMasterState(t),
+    handleUserInput: (t) => handleUserInput(t),
+    openSettings: () => { openSettings(); openModal("settingsModal"); },
+    masterRoute: (t) => masterRoute(t),
+    masterWebSearch: (t) => masterWebSearch(t),
+    masterVision: () => masterVision(),
+    analyzeVisionFile: (f) => analyzeVisionFile(f),
+    escapeHtml: (t) => escapeHtml(t),
+  };
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
@@ -2239,6 +2268,17 @@
 
 (function () {
   "use strict";
+
+  /* ── মূল অ্যাপের ফাংশন (আলাদা closure, তাই bridge দিয়ে) ── */
+  const _app = () => window.__sanjuApp || {};
+  const masterRoute       = (t) => (_app().masterRoute ? _app().masterRoute(t) : Promise.resolve(false));
+  const masterWebSearch   = (t) => (_app().masterWebSearch ? _app().masterWebSearch(t) : Promise.resolve(false));
+  const masterVision      = ()  => (_app().masterVision ? _app().masterVision() : Promise.resolve(false));
+  const analyzeVisionFile = (f) => (_app().analyzeVisionFile ? _app().analyzeVisionFile(f) : undefined);
+  const setMasterState    = (t) => { if (_app().setMasterState) _app().setMasterState(t); };
+  const addMessage        = (...a) => { if (_app().addMessage) _app().addMessage(...a); };
+  const escapeHtml = (str) => String(str == null ? "" : str).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const chatLog = document.getElementById("chatLog");
 
   /* ── Storage ── */
   const AG_HIST_KEY  = "sanju_agent_history";   // [{id, system, task, result, rating, ts}]
@@ -2421,7 +2461,7 @@ Return ONLY valid JSON:
       ]
     },
 
-    research: {
+    factcheck: {
       name: "Research & Fact Check",
       icon: "🔬",
       color: "#b400ff",
@@ -3332,6 +3372,16 @@ Return ONLY valid JSON:
 
   // Expose hook to main app
   window.sanjuCheckAgentCmd = checkAgentVoiceCommand;
+
+  window.__sanjuAgents = {
+    SYSTEMS,
+    open: openAgentsHub,
+    run: async (systemKey, task) => {
+      openAgentRunner(systemKey);
+      document.getElementById("agentTaskInput").value = task;
+      await runPipeline();
+    },
+  };
 
   /* ── Init ── */
   function initAgents() {

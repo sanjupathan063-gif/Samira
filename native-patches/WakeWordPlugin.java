@@ -50,6 +50,8 @@ public class WakeWordPlugin extends Plugin {
         String phrase = call.getString("phrase", "Hey Sanju");
         Intent i = new Intent(getContext(), WakeWordService.class);
         i.putExtra("phrase", phrase);
+        if (call.hasOption("silent")) i.putExtra("silent", call.getBoolean("silent", true));
+        if (call.hasOption("slow")) i.putExtra("slow", call.getBoolean("slow", false));
         try {
             if (Build.VERSION.SDK_INT >= 26) getContext().startForegroundService(i); else getContext().startService(i);
             JSObject r = new JSObject(); r.put("started", true); call.resolve(r);
@@ -85,6 +87,21 @@ public class WakeWordPlugin extends Plugin {
         r.put("restarts", WakeWordService.restarts);
         r.put("lastHeard", WakeWordService.lastHeard);
         r.put("strategy", WakeWordService.strategyName);
+        r.put("restartsPerMin", WakeWordService.restartsPerMin);
+        r.put("silent", WakeWordService.silentBeep);
+        r.put("slow", WakeWordService.slowMode);
+        call.resolve(r);
+    }
+
+    /** Beep-mute and slow-listening options; applied live and remembered for the next service start. */
+    @PluginMethod public void configure(PluginCall call) {
+        boolean silent = call.getBoolean("silent", true);
+        boolean slow = call.getBoolean("slow", false);
+        getContext().getSharedPreferences("sanju_wake_prefs", 0).edit()
+            .putBoolean("silent", silent).putBoolean("slow", slow).apply();
+        WakeWordService.silentBeep = silent;
+        WakeWordService.slowMode = slow;
+        JSObject r = new JSObject(); r.put("silent", silent); r.put("slow", slow);
         call.resolve(r);
     }
 

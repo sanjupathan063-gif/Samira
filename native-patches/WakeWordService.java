@@ -43,6 +43,9 @@ public class WakeWordService extends Service {
     public static volatile String lastHeard = "";
     public static volatile String strategyName = "";
     public static volatile long lastWakeAt = 0;
+    public static volatile boolean silentBeep = true;   // user option: keep the recognizer "tun-tun" muted
+    public static volatile boolean slowMode = false;    // user/self-heal option: listen less often
+    public static volatile int restartsPerMin = 0;
 
     private static final String CHANNEL_ID = "sanju_wake";
     private static final String ALERT_CHANNEL_ID = "sanju_wake_alert";
@@ -71,6 +74,9 @@ public class WakeWordService extends Service {
     private boolean paused = false;
     private boolean preferOffline = false;
     private int strategy = 0;
+    private int idleStreak = 0;          // consecutive silent cycles -> longer pauses -> fewer beeps
+    private long rateWindowStart = 0;
+    private int rateWindowCount = 0;
 
     private static final int[] BEEP_STREAMS = {
         AudioManager.STREAM_MUSIC, AudioManager.STREAM_NOTIFICATION, AudioManager.STREAM_SYSTEM
@@ -108,6 +114,11 @@ public class WakeWordService extends Service {
         phrase = p;
         sp.edit().putString("phrase", phrase).apply();
         phrasePattern = buildPhrasePattern(phrase);
+        if (intent != null && intent.hasExtra("silent")) sp.edit().putBoolean("silent", intent.getBooleanExtra("silent", true)).apply();
+        if (intent != null && intent.hasExtra("slow")) sp.edit().putBoolean("slow", intent.getBooleanExtra("slow", false)).apply();
+        silentBeep = sp.getBoolean("silent", true);
+        slowMode = sp.getBoolean("slow", false);
+        idleStreak = 0;
         stopping = false;
         paused = false;
         scheduleRestart(100);
@@ -162,7 +173,7 @@ public class WakeWordService extends Service {
                 @Override public void onBeginningOfSpeech() {}
                 @Override public void onRmsChanged(float rmsdB) {}
                 @Override public void onBufferReceived(byte[] buffer) {}
-                @Override public void onEndOfSpeech() {}
+                @Override public void onEndOfSpeech() { muteBeep(); }
                 @Override public void onEvent(int eventType, Bundle params) {}
                 @Override public void onPartialResults(Bundle partialResults) { onPartial(partialResults); }
                 @Override public void onResults(Bundle results) { onFinal(results); }
@@ -182,6 +193,10 @@ public class WakeWordService extends Service {
             muteBeep();
             recognizer.startListening(i);
             restarts++;
+            long nowMs = System.currentTimeMillis();
+            if (nowMs - rateWindowStart > 60000) { rateWindowStart = nowMs; rateWindowCount = 0; }
+            rateWindowCount++;
+            restartsPerMin = rateWindowCount;
         } catch (Exception e) {
             lastError = -2;
             consecutiveFailures++;
@@ -193,6 +208,7 @@ public class WakeWordService extends Service {
         ArrayList<String> list = b == null ? null : b.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
         if (list == null || list.isEmpty()) return;
         lastHeard = list.get(0);
+        if (lastHeard != null && !lastHeard.trim().isEmpty()) idleStreak = 0;
         for (String raw : list) {
             if (raw != null && extractCommand(raw) != null) { partialHit = raw; break; }
         }
@@ -206,24 +222,35 @@ public class WakeWordService extends Service {
             lastHeard = list.get(0);
             boolean hit = false;
             for (String raw : list) {
-                if (raw != null && extractCommand(raw) != null) { fire(raw); hit = true; break; }
+                if (raw != null && extractCommand(raw) != null) { fire(raw); hit = true; idleStreak = -1; break; }
             }
             if (!hit && partialHit != null) fire(partialHit);
         } else if (partialHit != null) {
             fire(partialHit);
         }
         partialHit = null;
-        scheduleRestart(350);
+        idleStreak++;
+        scheduleRestart(idleDelay());
+    }
+
+    /** Silence is normal. Waiting longer after each silent cycle means far fewer beeps and less battery use. */
+    private int idleDelay() {
+        int base = Math.min(4000, 700 + idleStreak * 300);
+        if (slowMode) base = Math.min(8000, base * 2);
+        if (restartsPerMin > 30) base = Math.max(base, 3500);   // restart storm -> throttle by itself
+        return base;
     }
 
     private void onRecognitionError(int error) {
         lastError = error;
+        muteBeep();
         if (partialHit != null) { String p = partialHit; partialHit = null; fire(p); }
         switch (error) {
             case 7:  // ERROR_NO_MATCH
             case 6:  // ERROR_SPEECH_TIMEOUT -> just silence, normal
                 consecutiveFailures = 0;
-                scheduleRestart(350);
+                idleStreak++;
+                scheduleRestart(idleDelay());
                 break;
             case 9:  // ERROR_INSUFFICIENT_PERMISSIONS
                 stopping = true;
@@ -341,6 +368,7 @@ public class WakeWordService extends Service {
     }
 
     private void muteBeep() {
+        if (!silentBeep) return;
         try {
             if (audio == null) audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
             if (audio == null || audio.isMusicActive()) return;
@@ -352,7 +380,7 @@ public class WakeWordService extends Service {
             }
             if (any) {
                 handler.removeCallbacks(unmuteTask);
-                handler.postDelayed(unmuteTask, 900);
+                handler.postDelayed(unmuteTask, 1500);
             }
         } catch (Exception ignored) {}
     }
