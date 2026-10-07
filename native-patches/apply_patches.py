@@ -8,7 +8,7 @@ PATCH_DIR=Path(__file__).resolve().parent
 
 def copy_java_files():
     ANDROID_JAVA_DIR.mkdir(parents=True,exist_ok=True)
-    for filename in ('PhoneControlPlugin.java','VoiceInputPlugin.java','TtsPlugin.java','WakeWordPlugin.java','WakeWordService.java','SanjuSchedulerPlugin.java','AccessibilityControlPlugin.java','SanjuAccessibilityService.java','CallAssistantPlugin.java','CallStateReceiver.java','CallAiSession.java','NotificationListenerService.java','NotificationAccessPlugin.java','MainActivity.java'):
+    for filename in ('PhoneControlPlugin.java','VoiceInputPlugin.java','TtsPlugin.java','WakeWordPlugin.java','WakeWordService.java','SanjuSchedulerPlugin.java','AccessibilityControlPlugin.java','SanjuAccessibilityService.java','CallAssistantPlugin.java','CallStateReceiver.java','CallAiSession.java','SanjuNotificationListenerService.java','NotificationAccessPlugin.java','MainActivity.java'):
         shutil.copyfile(PATCH_DIR/filename,ANDROID_JAVA_DIR/filename)
 
 def copy_resources():
