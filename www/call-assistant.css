@@ -1,0 +1,50 @@
+/* SANJU — Call Assistant */
+.ca-modal { max-height: 88vh; overflow-y: auto; }
+.ca-modal select {
+  width: 100%; background: rgba(4,5,12,.6); border: 1px solid var(--edge); border-radius: 8px;
+  padding: 10px 12px; color: var(--text); font-family: var(--font-body);
+}
+.ca-switch { display: flex !important; align-items: center; gap: 10px; margin: 12px 0 !important; font-size: 14px !important; color: var(--text) !important; }
+.ca-switch input { width: 20px; height: 20px; accent-color: var(--cyan); flex: 0 0 auto; }
+.ca-perm { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; font-size: 12px; }
+.ca-chip { padding: 3px 8px; border: 1px solid var(--edge); border-radius: 999px; }
+.ca-chip.ok { color: #2bff9a; border-color: rgba(43,255,154,.5); }
+.ca-chip.no { color: #ff8a8a; border-color: rgba(255,92,92,.5); }
+.ca-bad { color: #ffb3b3; }
+.ca-actions { display: flex; gap: 8px; margin: 10px 0; }
+.ca-h { margin: 16px 0 8px; font-size: 14px; color: var(--cyan); font-family: var(--font-display); letter-spacing: 1.5px; }
+
+.ca-live {
+  margin: 4px 0 12px; padding: 12px; border: 1px solid var(--magenta);
+  background: rgba(255,47,146,.1); animation: caPulse 1.4s ease-in-out infinite;
+}
+@keyframes caPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(255,47,146,.0); } 50% { box-shadow: 0 0 22px rgba(255,47,146,.45); } }
+.ca-live-who { font-weight: 700; margin-bottom: 10px; }
+.ca-live-row { display: flex; gap: 8px; }
+.btn.ca-danger { background: linear-gradient(135deg, #ff3b3b, #ff8a3d); color: #fff; }
+
+.ca-log { display: flex; flex-direction: column; gap: 8px; }
+.ca-item { padding: 10px; background: rgba(255,255,255,.04); border-left: 2px solid var(--cyan); }
+.ca-item-h { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.ca-item-h small { color: var(--muted); font-size: 11px; }
+.ca-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
+.ca-tags span { font-size: 11px; padding: 2px 7px; border: 1px solid var(--edge); border-radius: 999px; color: var(--muted); }
+.ca-sum { margin: 4px 0 0; font-size: 13px; line-height: 1.55; white-space: pre-wrap; }
+.ca-mini { padding: 7px 10px; border: 1px solid var(--edge); background: transparent; color: var(--text); font-family: var(--font-body); font-size: 12.5px; border-radius: 8px; }
+.ca-mini.pri { background: linear-gradient(135deg, var(--cyan), var(--violet)); color: #04050b; border: 0; font-weight: 700; }
+.ca-note textarea {
+  width: 100%; background: rgba(4,5,12,.6); border: 1px solid var(--edge); border-radius: 8px;
+  padding: 10px; color: var(--text); font-family: var(--font-body); resize: vertical;
+}
+@media (prefers-reduced-motion: reduce) { .ca-live { animation: none; } }
+
+/* হোমের ওয়াইড বাটন */
+.neural-tools.ca-row { grid-template-columns: 1fr !important; margin-top: 6px !important; }
+.neural-tools.ca-row button {
+  display: flex !important; flex-direction: row !important; align-items: center; justify-content: center; gap: 10px;
+  min-height: 54px !important; border-color: rgba(236,72,153,.35) !important;
+  background: linear-gradient(90deg, rgba(236,72,153,.12), rgba(34,211,238,.10)) !important;
+}
+.neural-tools.ca-row button span { font-size: 20px !important; color: #ec4899; }
+.neural-tools.ca-row button small { display: block !important; font-size: 8px !important; }
+.neural-tools.ca-row button strong { font-size: 11px !important; }

@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+<title>SANJU AI 3.4 — One Agent Core</title>
+<link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="persona.css" />
+<link rel="stylesheet" href="call-assistant.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="hud-grid"></div>
+  <div class="hud-scanline"></div>
+  <div class="hud-vignette"></div>
+
+  <div class="app">
+
+    <!-- Top bar -->
+    <header class="topbar">
+      <button class="icon-btn" id="menuBtn" aria-label="Menu">
+        <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+      <div class="brand">SANJU</div>
+      <div class="topbar-right">
+        <button class="icon-btn" id="bellBtn" aria-label="Notifications">
+          <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="dot"></span>
+        </button>
+        <div class="avatar">S</div>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <!-- Greeting -->
+      <section class="greeting">
+        <p class="hello" id="greetingText">শুভ সন্ধ্যা,</p>
+        <h1 class="username" id="userName">বস</h1>
+        <p class="status" id="statusLine">প্রস্তুত আছি</p>
+      </section>
+
+      <div class="energy-pill" id="energyPill">
+        <svg viewBox="0 0 24 24" class="bolt"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+        <span id="energyLabel">অনলাইন</span>
+      </div>
+
+      <!-- SANJU CORE — একটাই এজেন্ট, ভেতরে সব মডিউল -->
+      <section class="neural-dashboard persona-dashboard">
+        <div class="neural-topline"><span class="neural-shield">◈</span><span>SANJU CORE · একটাই এজেন্ট</span><b id="bridgeStatus">সব মডিউল ভেতরে</b></div>
+
+        <div class="persona-stage" id="personaStage">
+          <div class="persona-floor"></div>
+          <div class="persona-sway">
+            <div class="persona-rig" id="personaRig">
+              <div class="persona idle" id="orb" role="button" aria-label="সাঞ্জু — ট্যাপ করে কথা বলো">
+                <div class="p-aura"></div>
+                <div class="p-ring p-ring1"></div>
+                <div class="p-ring p-ring2"></div>
+
+                <svg class="p-svg" viewBox="0 0 300 380" aria-hidden="true">
+                  <defs>
+                    <clipPath id="clipL"><rect x="0" y="0" width="150" height="380"/></clipPath>
+                    <clipPath id="clipR"><rect x="150" y="0" width="150" height="380"/></clipPath>
+                    <radialGradient id="skinGrad" cx="38%" cy="34%" r="75%">
+                      <stop offset="0" stop-color="#ffe3c7"/><stop offset=".55" stop-color="#eab392"/><stop offset="1" stop-color="#b87a58"/>
+                    </radialGradient>
+                    <linearGradient id="hairGrad" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0" stop-color="#4a3328"/><stop offset="1" stop-color="#120a0b"/>
+                    </linearGradient>
+                    <linearGradient id="metalGrad" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0" stop-color="#3b4a63"/><stop offset=".5" stop-color="#1b2538"/><stop offset="1" stop-color="#0a101d"/>
+                    </linearGradient>
+                    <linearGradient id="suitGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="#27324f"/><stop offset="1" stop-color="#0d1426"/>
+                    </linearGradient>
+                    <radialGradient id="cyEye" cx="50%" cy="50%" r="50%">
+                      <stop offset="0" stop-color="#e0fbff"/><stop offset=".35" stop-color="#22d3ee"/><stop offset="1" stop-color="#0369a1"/>
+                    </radialGradient>
+                    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+                      <feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                    </filter>
+                    <path id="bodyShape" d="M16 380 C24 316 70 296 112 284 L188 284 C230 296 276 316 284 380 Z"/>
+                    <path id="neckShape" d="M122 232 L122 292 C132 306 168 306 178 292 L178 232 Z"/>
+                    <path id="headShape" d="M150 40 C208 40 238 88 236 148 C234 206 204 256 150 262 C96 256 66 206 64 148 C62 88 92 40 150 40 Z"/>
+                  </defs>
+
+                  <!-- ═════ HUMAN HALF (left) ═════ -->
+                  <g clip-path="url(#clipL)">
+                    <use href="#bodyShape" fill="url(#suitGrad)"/>
+                    <path d="M126 288 L150 330 L174 288" fill="none" stroke="#cbd5e1" stroke-width="2" opacity=".75"/>
+                    <path d="M60 380 C70 340 96 318 120 304" fill="none" stroke="rgba(255,255,255,.10)" stroke-width="3"/>
+                    <use href="#neckShape" fill="url(#skinGrad)"/>
+                    <path d="M122 262 C132 276 150 280 178 262 L178 232 L122 232 Z" fill="rgba(60,25,15,.28)"/>
+                    <use href="#headShape" fill="url(#skinGrad)"/>
+                    <path d="M64 150 C62 206 96 256 150 262 L150 232 C108 226 82 196 76 150 Z" fill="rgba(60,25,15,.16)"/>
+                    <ellipse cx="96" cy="188" rx="20" ry="12" fill="#ff9a8a" opacity=".16"/>
+                    <path d="M150 34 C94 30 54 70 58 152 C62 120 78 98 100 90 C124 100 144 96 150 82 Z" fill="url(#hairGrad)"/>
+                    <path d="M62 140 C58 172 64 198 72 214 C72 184 76 154 86 128 Z" fill="url(#hairGrad)"/>
+                    <path d="M66 164 C58 164 56 188 68 192" fill="#e3a784" stroke="#b87a58" stroke-width="1.4"/>
+                    <path d="M92 129 Q112 117 134 126" fill="none" stroke="#2a1a14" stroke-width="4.6" stroke-linecap="round"/>
+                    <g class="eye-human">
+                      <ellipse cx="112" cy="150" rx="17" ry="9" fill="#fff"/>
+                      <circle class="iris" cx="112" cy="150" r="7.6" fill="#5b3a29"/>
+                      <circle class="iris" cx="112" cy="150" r="3.6" fill="#07070a"/>
+                      <circle cx="109.4" cy="147.4" r="1.7" fill="#fff" opacity=".92"/>
+                      <path d="M94 149 Q112 133 130 149" fill="none" stroke="#2a1a14" stroke-width="3" stroke-linecap="round"/>
+                      <rect class="lid" x="92" y="137" width="40" height="24" fill="#eab392"/>
+                    </g>
+                    <path d="M147 150 Q141 176 134 185 Q142 191 150 187" fill="none" stroke="rgba(120,64,44,.5)" stroke-width="2.2" stroke-linecap="round"/>
+                    <path d="M150 215 Q132 211 120 216 Q134 228 150 229 Z" fill="#c4605e"/>
+                    <path d="M120 216 Q134 214 150 215" fill="none" stroke="rgba(110,30,34,.55)" stroke-width="1.4"/>
+                  </g>
+
+                  <!-- ═════ CYBER HALF (right) ═════ -->
+                  <g clip-path="url(#clipR)">
+                    <use href="#bodyShape" fill="url(#metalGrad)"/>
+                    <path d="M150 330 L212 300 M150 346 L240 316 M190 304 L190 380" fill="none" stroke="#22d3ee" stroke-width="1.2" opacity=".55" filter="url(#glow)"/>
+                    <circle class="core-dot" cx="196" cy="338" r="9" fill="url(#cyEye)" filter="url(#glow)"/>
+                    <use href="#neckShape" fill="url(#metalGrad)"/>
+                    <path d="M126 250 H174 M126 264 H174 M126 278 H174" stroke="#22d3ee" stroke-width="1.2" opacity=".6" filter="url(#glow)"/>
+                    <use href="#headShape" fill="url(#metalGrad)"/>
+                    <path d="M150 72 L186 72 L202 94 L202 120 M236 150 L214 150 L206 164 M150 252 L176 247 L198 229 L216 204 M164 104 L176 104 L184 114" fill="none" stroke="#22d3ee" stroke-width="1.5" opacity=".8" filter="url(#glow)"/>
+                    <circle cx="222" cy="168" r="11" fill="#0b1220" stroke="#22d3ee" stroke-width="1.5" filter="url(#glow)"/>
+                    <circle cx="222" cy="168" r="4" fill="#22d3ee"/>
+                    <path d="M200 196 H216 M200 203 H220 M200 210 H214" stroke="#22d3ee" stroke-width="1.2" opacity=".55"/>
+                    <path d="M168 128 L196 123 L208 130" fill="none" stroke="#7dd3fc" stroke-width="3.4" stroke-linecap="round" filter="url(#glow)"/>
+                    <g class="eye-cyber">
+                      <circle cx="188" cy="150" r="17" fill="#050b16" stroke="#0e7490" stroke-width="1.5"/>
+                      <circle class="cy-ring" cx="188" cy="150" r="14" fill="none" stroke="#22d3ee" stroke-width="1.8" stroke-dasharray="5 4" filter="url(#glow)"/>
+                      <circle class="cy-iris" cx="188" cy="150" r="8.5" fill="url(#cyEye)" filter="url(#glow)"/>
+                      <circle cx="188" cy="150" r="3.2" fill="#001018"/>
+                      <circle cx="185.4" cy="147.4" r="1.5" fill="#fff" opacity=".9"/>
+                    </g>
+                    <path d="M150 188 L158 186 L164 192 L150 194" fill="none" stroke="#38bdf8" stroke-width="1.6" opacity=".7"/>
+                    <path d="M150 216 H176 L184 222 L176 228 H150" fill="none" stroke="#22d3ee" stroke-width="1.7" filter="url(#glow)"/>
+                  </g>
+
+                  <!-- মাঝের seam -->
+                  <line class="p-seam" x1="150" y1="34" x2="150" y2="380" stroke="#67e8f9" stroke-width="1.3" filter="url(#glow)"/>
+                  <ellipse class="mouth-open" cx="150" cy="222" rx="15" ry="7" fill="#2b0d12"/>
+                </svg>
+
+                <div class="p-wave"><div class="waveform" id="waveform"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div>
+
+                <div class="p-chip pc1"><i></i><span id="chipCore">CORE ONLINE</span></div>
+                <div class="p-chip pc2"><i></i><span id="chipWake">WAKE · বন্ধ</span></div>
+                <div class="p-chip pc3"><i></i><span id="chipAgents">সব এজেন্ট → ১</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="persona-label"><strong id="orbState">প্রস্তুত আছি</strong><small class="neural-state"><i></i><span id="masterState">MASTER AGENT READY</span></small></div>
+
+        <div class="persona-controls">
+          <button id="beepToggleBtn" type="button"><span>🔇</span><b id="beepToggleLabel">টুনটুন বন্ধ</b></button>
+          <button id="wakeQuickBtn" type="button"><span>🎙️</span><b id="wakeQuickLabel">Wake বন্ধ</b></button>
+          <button id="healQuickBtn" type="button"><span>🩺</span><b>Self-Heal</b></button>
+          <button id="agentQuickBtn" type="button"><span>✦</span><b>এজেন্ট</b></button>
+        </div>
+
+        <div class="neural-tools">
+          <button data-neural-action="wake"><span>◉</span><strong>Wake Word</strong><small id="wakeState">বন্ধ</small></button>
+          <button data-neural-action="vision"><span>◌</span><strong>Vision</strong><small>Camera + Image</small></button>
+          <button data-neural-action="web"><span>⌁</span><strong>Live Web</strong><small>Search + Weather</small></button>
+          <button data-neural-action="home"><span>⌂</span><strong>Smart Home</strong><small>Home Assistant</small></button>
+        </div>
+        <div class="neural-tools ca-row">
+          <button id="callAssistBtn" type="button"><span>☎</span><strong>Call Assistant</strong><small id="caHomeState">কে কল করছে বলবে • অটো-অ্যানসার • কল সারাংশ</small></button>
+        </div>
+        <div class="master-task"><span class="master-dot"></span><span>একটা কাজ বলো — SANJU নিজেই ঠিক করবে ভেতরের কোন মডিউল লাগবে</span></div>
+      </section>
+
+      <!-- Quick actions -->
+      <section class="quick-row">
+        <button class="quick-btn" id="selfUpgradeBtn" data-action="self-upgrade">
+          <svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="9"/></svg>
+          Self Upgrade
+        </button>
+        <button class="quick-btn" data-action="phone">
+          <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          ফোন কন্ট্রোল
+        </button>
+        <button class="quick-btn" data-action="notes">
+          <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          নোট
+        </button>
+        <button class="quick-btn" data-action="settings">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          সেটিংস
+        </button>
+      </section>
+
+      <!-- Status cards -->
+      <section class="card-row">
+        <div class="stat-card">
+          <div class="stat-head"><svg viewBox="0 0 24 24"><rect x="1" y="6" width="18" height="12" rx="2"/><line x1="23" y1="13" x2="23" y2="11"/></svg>ব্যাটারি</div>
+          <div class="stat-value" id="batteryValue">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-head"><svg viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>নেটওয়ার্ক</div>
+          <div class="stat-value" id="networkValue">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-head"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>মুড</div>
+          <div class="stat-value" id="moodValue">ভালো</div>
+        </div>
+      </section>
+
+      <!-- SANJU Agent Mode -->
+      <!-- Chat log -->
+      <section class="chat-log" id="chatLog" aria-live="polite"></section>
+
+    </main>
+
+    <!-- Input bar -->
+    <div class="input-bar">
+      <button class="icon-btn small" id="attachBtn" aria-label="Attach">
+        <svg viewBox="0 0 24 24"><path d="M21.44 11.05 12.25 20.24a5.5 5.5 0 0 1-7.78-7.78l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95L9.41 17.42a1.5 1.5 0 0 1-2.12-2.12l8.49-8.49"/></svg>
+      </button>
+      <input type="text" id="chatInput" placeholder="সাঞ্জুকে কিছু জিজ্ঞেস করুন..." autocomplete="off" />
+      <button class="icon-btn small send" id="sendBtn" aria-label="Send">
+        <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+
+    <!-- Bottom nav -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-tab="home">
+        <svg viewBox="0 0 24 24"><path d="M3 12l9-9 9 9"/><path d="M9 21V12h6v9"/><path d="M5 10v11h14V10"/></svg>
+        <span>হোম</span>
+      </button>
+      <button class="nav-item" data-tab="agents">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/><path d="M2 20v-1a4 4 0 0 1 4-4h1M22 20v-1a4 4 0 0 1-4-4h-1"/><circle cx="5" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+        <span>এজেন্ট</span>
+      </button>
+      <button class="mic-btn" id="micBtn" aria-label="Voice">
+        <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>
+      </button>
+      <button class="nav-item" data-tab="memories">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span>স্মৃতি</span>
+      </button>
+      <button class="nav-item" data-tab="chat">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>চ্যাট</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- Settings modal -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal reticle">
+      <h2>সেটিংস</h2>
+      <p class="settings-scroll-hint">⬍ নিচে স্ক্রল করে সব API key ও অপশন দেখা যাবে • সেভ করলে এই স্ক্রিন বন্ধ হবে না</p>
+      <label for="apiKeyInput">Groq API Key</label>
+      <input type="password" id="apiKeyInput" placeholder="gsk_..." />
+      <label for="nameInput">আপনার নাম</label>
+      <input type="text" id="nameInput" placeholder="বস" />
+      <label for="modelInput">Groq মডেল</label>
+      <input type="text" id="modelInput" placeholder="openai/gpt-oss-120b" />
+      <label for="voiceLangSelect">কথা বলার ভাষা (TTS)</label>
+      <select id="voiceLangSelect">
+        <option value="auto">স্বয়ংক্রিয় (যা বলা হচ্ছে সেই ভাষায়)</option>
+        <option value="bn-BD">বাংলা</option>
+        <option value="hi-IN">হিন্দি</option>
+        <option value="en-IN">ইংরেজি</option>
+      </select>
+      <label for="voiceStyleSelect">SANJU voice style</label>
+      <select id="voiceStyleSelect"><option value="cinematic">Cinematic</option><option value="robotic">Robotic</option><option value="human">Human</option></select>
+      <label for="geminiKeyInput">Gemini API Key (সাঞ্জুর কণ্ঠস্বরের জন্য)</label>
+      <input type="password" id="geminiKeyInput" placeholder="AI...  (aistudio.google.com থেকে নাও)" />
+      <label for="youtubeKeyInput">YouTube Data API Key (ঐচ্ছিক — ভিডিও সার্চের জন্য)</label>
+      <input type="password" id="youtubeKeyInput" placeholder="খালি রাখলে শুধু সার্চ পেজ খুলবে" />
+      <label class="setting-check"><input type="checkbox" id="wakeEnabledInput" /> <span>Hey Sanju / Hey Jarvis background wake word চালু</span></label>
+      <label class="setting-check"><input type="checkbox" id="beepOffInput" /> <span>🔇 মাইক চালুর "টুনটুন" বিপ সাউন্ড বন্ধ রাখো</span></label>
+      <label class="setting-check"><input type="checkbox" id="wakeSlowInput" /> <span>🐢 Wake word কম ঘন ঘন শুনুক (টুনটুন ও ব্যাটারি কমে)</span></label>
+      <label class="setting-check"><input type="checkbox" id="autoHealInput" /> <span>🩺 Self-Heal: ভুল হলে নিজে নিজে ঠিক করুক</span></label>
+      <label for="wakePhraseInput">Wake phrase</label>
+      <input type="text" id="wakePhraseInput" placeholder="Hey Sanju" />
+      <label for="haUrlInput">Home Assistant URL (ঐচ্ছিক)</label>
+      <input type="url" id="haUrlInput" placeholder="http://homeassistant.local:8123" />
+      <label for="haTokenInput">Home Assistant Long-Lived Token</label>
+      <input type="password" id="haTokenInput" placeholder="eyJ..." />
+      <label for="haLightInput">Default Light entity_id</label>
+      <input type="text" id="haLightInput" placeholder="light.living_room" />
+      <label for="haFanInput">Default Fan entity_id</label>
+      <input type="text" id="haFanInput" placeholder="fan.ceiling" />
+      <label for="haAcInput">Default AC entity_id</label>
+      <input type="text" id="haAcInput" placeholder="climate.bedroom" />
+      <p class="hint-text">Wake word normal background অবস্থায় foreground microphone service দিয়ে চলে। Android-এর force-stop/কিছু battery saver অবস্থায় OS এটিকে থামাতে পারে।</p>
+      <div class="modal-actions">
+        <button class="btn ghost" id="closeSettings">বাতিল</button>
+        <button class="btn primary" id="saveSettings">সেভ করুন</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notes modal -->
+  <div class="modal-overlay" id="notesModal">
+    <div class="modal reticle">
+      <h2>নোট</h2>
+      <div class="list-box" id="notesList"></div>
+      <div class="add-row">
+        <input type="text" id="noteInput" placeholder="নতুন নোট লিখো..." />
+        <button class="btn primary small-btn" id="addNoteBtn">যোগ করো</button>
+      </div>
+      <div class="modal-actions">
+        <button class="btn ghost" id="closeNotes">বন্ধ করো</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Memories modal -->
+  <div class="modal-overlay" id="memoriesModal">
+    <div class="modal reticle">
+      <h2>স্মৃতি</h2>
+      <p class="hint-text">এখানে যা লিখবে, সাঞ্জু সবসময় মনে রাখবে (যেমন তোমার পছন্দ, জন্মদিন, অভ্যাস)।</p>
+      <div class="list-box" id="memoriesList"></div>
+      <div class="add-row">
+        <input type="text" id="memoryInput" placeholder="যেমন: আমার জন্মদিন ১২ মার্চ" />
+        <button class="btn primary small-btn" id="addMemoryBtn">যোগ করো</button>
+      </div>
+      <div class="modal-actions">
+        <button class="btn ghost" id="closeMemories">বন্ধ করো</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scan HUD overlay -->
+  <div class="hud-overlay" id="scanModal">
+    <div class="hud">
+      <div class="hud-radar">
+        <div class="hud-radar-sweep"></div>
+        <div class="hud-radar-ring"></div>
+        <div class="hud-radar-ring r2"></div>
+        <div class="hud-center">SYSTEM<br/>SCAN</div>
+      </div>
+      <div class="hud-log" id="hudLog"></div>
+      <button class="btn ghost" id="closeScan">বন্ধ করো</button>
+    </div>
+  </div>
+
+
+  <!-- ═══ AGENTS HUB ═══ -->
+  <div class="hud-overlay" id="agentsHub">
+    <div class="agents-hub">
+      <div class="agents-hub-header">
+        <div class="agents-hub-title">
+          <div class="hub-icon-wrap">🤖</div>
+          <div>
+            <h2>SANJU Core</h2>
+            <p>একটাই এজেন্ট — সব কাজ ভেতরে</p>
+          </div>
+        </div>
+        <button class="icon-btn" id="closeAgentsHub">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="unified-agent">
+        <div class="ua-core"><span class="ua-dot"></span><div><strong>SANJU CORE</strong><small>একটাই এজেন্ট · ভেতরে সব মডিউল নিজে নিজে কাজ করে</small></div></div>
+        <textarea id="unifiedTaskInput" class="task-textarea" rows="3" placeholder="যেকোনো কাজ বলো — যেমন: একটা ব্লগ লিখে দাও / এই কোডের ভুল ঠিক করো / বাংলাদেশের AI বাজার নিয়ে রিপোর্ট করো"></textarea>
+        <button class="run-btn" id="unifiedRunBtn">🚀 SANJU-কে কাজ দাও</button>
+        <p class="ua-route" id="unifiedRoute">আমি নিজেই বেছে নেব কোন মডিউল লাগবে।</p>
+        <div class="ua-modules-head">ভেতরের মডিউল <span id="uaCount"></span> — ট্যাপ করলে নির্দিষ্ট মডিউলে কাজ হবে</div>
+        <div class="ua-modules" id="uaModules"></div>
+      </div>
+      <div class="agent-history-box">
+        <div class="history-head-row">
+          <span>📋 সাম্প্রতিক রান</span>
+          <button id="clearAgentHistory" class="clear-hist-btn">মুছো</button>
+        </div>
+        <div id="agentHistoryList" class="agent-hist-list">
+          <p class="empty-hint">এখনো কোনো রান নেই।</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ AGENT RUNNER (full screen) ═══ -->
+  <div class="hud-overlay" id="agentRunner">
+    <div class="agent-runner">
+      <div class="runner-header">
+        <button class="icon-btn" id="backToHub">
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div class="runner-title-row">
+          <span id="runnerIcon">✍️</span>
+          <span id="runnerName">Content Creation</span>
+        </div>
+        <button class="icon-btn" id="cancelRun">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <!-- Input Section -->
+      <div id="runnerInputSection" class="runner-section">
+        <label class="runner-label" id="runnerInputLabel">কাজের বিবরণ দাও</label>
+        <textarea id="agentTaskInput" class="task-textarea" rows="4" placeholder="এখানে বিস্তারিত লেখো..."></textarea>
+        <div id="improvementBadge" class="improve-badge hidden">
+          <span>⚡</span><span id="improveBadgeText">আগের অভিজ্ঞতা কাজে লাগাবো</span>
+        </div>
+        <button class="run-btn" id="runPipelineBtn">🚀 পাইপলাইন শুরু করো</button>
+      </div>
+
+      <!-- Pipeline Progress -->
+      <div id="pipelineSection" class="runner-section hidden">
+        <div class="pipeline-header">
+          <span id="pipelineStatusText">⏳ চলছে...</span>
+          <span id="pipelineProgress">০/৫</span>
+        </div>
+        <div id="pipelineSteps" class="pipeline-steps"></div>
+        <button id="stopPipelineBtn" class="stop-btn">⛔ থামাও</button>
+      </div>
+
+      <!-- Output Section -->
+      <div id="outputSection" class="runner-section hidden">
+        <div class="out-tabs">
+          <button class="out-tab active" data-out="summary">📝 সারসংক্ষেপ</button>
+          <button class="out-tab" data-out="detailed">📋 বিস্তারিত</button>
+          <button class="out-tab" data-out="agents">🤖 এজেন্ট লগ</button>
+        </div>
+        <div id="outputContent" class="out-content"></div>
+        <div class="out-actions">
+          <button id="copyOutputBtn" class="act-btn">📋 কপি</button>
+          <button id="saveOutputBtn" class="act-btn">💾 সেভ</button>
+          <button id="shareOutputBtn" class="act-btn">📤 শেয়ার</button>
+        </div>
+        <div class="feedback-row">
+          <span>এই রান কেমন হলো?</span>
+          <button id="feedbackGood" class="fb-btn good">👍 ভালো</button>
+          <button id="feedbackBad" class="fb-btn bad">👎 খারাপ</button>
+        </div>
+        <button class="run-btn secondary" id="runAgainBtn">🔄 আবার চালাও</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Call Assistant modal -->
+  <div class="modal-overlay" id="callAssistModal">
+    <div class="modal reticle ca-modal">
+      <h2>কল অ্যাসিস্ট্যান্ট</h2>
+      <div id="caLive" class="ca-live" hidden>
+        <div class="ca-live-who" id="caLiveWho"></div>
+        <div class="ca-live-row"><button class="btn primary" id="caAnswerBtn">📞 ধরো</button><button class="btn ca-danger" id="caHangBtn">✕ কেটে দাও</button></div>
+      </div>
+      <div class="ca-perm" id="caPerm"></div>
+      <label class="ca-switch"><input type="checkbox" id="caEnabled"/><span>কল অ্যাসিস্ট্যান্ট চালু</span></label>
+      <label class="ca-switch"><input type="checkbox" id="caAnnounce"/><span>কে কল করছে ভয়েসে বলবে</span></label>
+      <label for="caAuto">না ধরলে অটো-অ্যানসার (AI কথা বলবে)</label>
+      <select id="caAuto">
+        <option value="0">বন্ধ</option><option value="10">১০ সেকেন্ড পরে</option><option value="15">১৫ সেকেন্ড পরে</option>
+        <option value="20">২০ সেকেন্ড পরে</option><option value="30">৩০ সেকেন্ড পরে</option>
+      </select>
+      <p class="hint-text">অটো-অ্যানসারে সাঞ্জু প্রথমেই জানায় যে সে এআই। কলারের কথা শোনা ফোন/অ্যান্ড্রয়েড ভার্সনের ওপর নির্ভর করে (পরীক্ষামূলক)। কলের অডিও রেকর্ড করা হয় না। Groq API key লাগবে।</p>
+      <p class="hint-text">ভয়েসে কল কাটতে: Wake word চালু রেখে বলো “সাঞ্জু, call কেটে দাও” / “call ধরো”।</p>
+      <div class="ca-actions"><button class="btn ghost" id="caPermBtn">পারমিশন দাও</button><button class="btn ghost" id="caTestBtn">ভয়েস টেস্ট</button></div>
+      <h3 class="ca-h">সাম্প্রতিক কল</h3>
+      <div id="caLog" class="ca-log"></div>
+      <div class="modal-actions"><button class="btn ghost" id="caClear">লগ মুছো</button><button class="btn primary" id="caClose">বন্ধ করো</button></div>
+    </div>
+  </div>
+  <input id="visionPicker" type="file" accept="image/*" capture="environment" hidden />
+  <input id="filePicker" type="file" accept="image/*,.txt,.md,.json,.csv,.pdf" hidden />
+  <script src="sanju-core.js"></script>
+  <script src="sanju-cognitive.js"></script>
+  <script src="app.js"></script>
+  <script src="call-assistant.js"></script>
+
+  <div class="modal-overlay" id="selfUpgradeModal">
+    <div class="modal-card self-upgrade-card">
+      <div class="modal-head"><div><span class="eyebrow">SELF-EVOLVING CORE</span><h2>SANJU Self Upgrade</h2></div><button class="icon-btn" id="closeSelfUpgrade" aria-label="Close">✕</button></div>
+      <p class="upgrade-intro">বলুন: “আমার মধ্যে Calculator skill অ্যাড করো”। SANJU অনুমোদিত action-ভিত্তিক skill registry-তে নতুন skill সংরক্ষণ করবে।</p>
+      <div class="upgrade-input-row"><input id="skillRequestInput" type="text" placeholder="যে skill যোগ করতে চান…" autocomplete="off"><button id="addSkillBtn">ADD</button></div>
+      <div id="skillUpgradeMessage" class="upgrade-message" hidden></div>
+      <div class="upgrade-actions"><button id="runDiagnosticsBtn">🛠️ Self Diagnostic</button><button id="refreshSkillsBtn">↻ Refresh</button></div>
+      <h3>🧠 Installed Skills</h3><div id="skillList" class="skill-list"></div>
+      <h3>🛡️ System Health</h3><div id="diagnosticList" class="diagnostic-list"></div>
+      <small class="upgrade-note">নিরাপত্তার জন্য SANJU নিজে থেকে arbitrary native code execute করবে না। নতুন capability approved skill/action হিসেবে যোগ হবে।</small>
+    </div>
+  </div>
+</body>
+</html>

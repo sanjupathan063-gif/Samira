@@ -1,0 +1,72 @@
+name: Build Sanju APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Verify lockfile
+        run: test -f package-lock.json
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Build web assets (prebuilt www is the source of truth)
+        run: test -f www/index.html && test -f www/app.js && test -f www/sanju-core.js && test -f www/persona.css && test -f www/call-assistant.js && test -f www/call-assistant.css && node --check www/app.js && node --check www/sanju-core.js && node --check www/call-assistant.js
+
+      - name: Add Android platform (fresh)
+        run: |
+          rm -rf android
+          npx cap add android
+
+      - name: Sync Capacitor
+        run: npx cap sync android
+
+      - name: Apply native patches (phone control, voice input)
+        run: python3 native-patches/apply_patches.py
+
+      - name: Set APK version
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("android/app/build.gradle")
+          s = p.read_text()
+          import re
+          s = re.sub(r'versionCode\s+\d+', 'versionCode 340', s)
+          s = re.sub(r'versionName\s+"[^"]+"', 'versionName "3.4.0"', s)
+          p.write_text(s)
+          PY
+
+      - name: Make gradlew executable
+        run: chmod +x android/gradlew
+
+      - name: Verify native patch inputs
+        run: test -f native-patches/AccessibilityControlPlugin.java && test -f native-patches/SanjuAccessibilityService.java && test -f native-patches/res/xml/sanju_accessibility_config.xml && test -f native-patches/res/values/sanju_strings.xml
+
+      - name: Build debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sanju-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
