@@ -6,6 +6,7 @@
 <title>SANJU AI 3.4 — One Agent Core</title>
 <link rel="stylesheet" href="style.css" />
 <link rel="stylesheet" href="persona.css" />
+<link rel="stylesheet" href="call-assistant.css" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -166,6 +167,9 @@
           <button data-neural-action="vision"><span>◌</span><strong>Vision</strong><small>Camera + Image</small></button>
           <button data-neural-action="web"><span>⌁</span><strong>Live Web</strong><small>Search + Weather</small></button>
           <button data-neural-action="home"><span>⌂</span><strong>Smart Home</strong><small>Home Assistant</small></button>
+        </div>
+        <div class="neural-tools ca-row">
+          <button id="callAssistBtn" type="button"><span>☎</span><strong>Call Assistant</strong><small id="caHomeState">কে কল করছে বলবে • অটো-অ্যানসার • কল সারাংশ</small></button>
         </div>
         <div class="master-task"><span class="master-dot"></span><span>একটা কাজ বলো — SANJU নিজেই ঠিক করবে ভেতরের কোন মডিউল লাগবে</span></div>
       </section>
@@ -436,10 +440,37 @@
     </div>
   </div>
 
+
+  <!-- Call Assistant modal -->
+  <div class="modal-overlay" id="callAssistModal">
+    <div class="modal reticle ca-modal">
+      <h2>কল অ্যাসিস্ট্যান্ট</h2>
+      <div id="caLive" class="ca-live" hidden>
+        <div class="ca-live-who" id="caLiveWho"></div>
+        <div class="ca-live-row"><button class="btn primary" id="caAnswerBtn">📞 ধরো</button><button class="btn ca-danger" id="caHangBtn">✕ কেটে দাও</button></div>
+      </div>
+      <div class="ca-perm" id="caPerm"></div>
+      <label class="ca-switch"><input type="checkbox" id="caEnabled"/><span>কল অ্যাসিস্ট্যান্ট চালু</span></label>
+      <label class="ca-switch"><input type="checkbox" id="caAnnounce"/><span>কে কল করছে ভয়েসে বলবে</span></label>
+      <label for="caAuto">না ধরলে অটো-অ্যানসার (AI কথা বলবে)</label>
+      <select id="caAuto">
+        <option value="0">বন্ধ</option><option value="10">১০ সেকেন্ড পরে</option><option value="15">১৫ সেকেন্ড পরে</option>
+        <option value="20">২০ সেকেন্ড পরে</option><option value="30">৩০ সেকেন্ড পরে</option>
+      </select>
+      <p class="hint-text">অটো-অ্যানসারে সাঞ্জু প্রথমেই জানায় যে সে এআই। কলারের কথা শোনা ফোন/অ্যান্ড্রয়েড ভার্সনের ওপর নির্ভর করে (পরীক্ষামূলক)। কলের অডিও রেকর্ড করা হয় না। Groq API key লাগবে।</p>
+      <p class="hint-text">ভয়েসে কল কাটতে: Wake word চালু রেখে বলো “সাঞ্জু, call কেটে দাও” / “call ধরো”।</p>
+      <div class="ca-actions"><button class="btn ghost" id="caPermBtn">পারমিশন দাও</button><button class="btn ghost" id="caTestBtn">ভয়েস টেস্ট</button></div>
+      <h3 class="ca-h">সাম্প্রতিক কল</h3>
+      <div id="caLog" class="ca-log"></div>
+      <div class="modal-actions"><button class="btn ghost" id="caClear">লগ মুছো</button><button class="btn primary" id="caClose">বন্ধ করো</button></div>
+    </div>
+  </div>
   <input id="visionPicker" type="file" accept="image/*" capture="environment" hidden />
   <input id="filePicker" type="file" accept="image/*,.txt,.md,.json,.csv,.pdf" hidden />
   <script src="sanju-core.js"></script>
+  <script src="sanju-cognitive.js"></script>
   <script src="app.js"></script>
+  <script src="call-assistant.js"></script>
 
   <div class="modal-overlay" id="selfUpgradeModal">
     <div class="modal-card self-upgrade-card">

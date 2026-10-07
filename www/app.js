@@ -1689,6 +1689,9 @@
      ============================================================ */
   async function handleUserInput(text) {
     text = (text || "").trim();
+    try { if (window.SanjuCognitive && await window.SanjuCognitive.intercept(text)) return; } catch (e) { console.warn("Cognitive Core:", e); }
+    // Call Assistant: "call কেটে দাও / call ধরো" while a call is ringing or active
+    try { if (window.SanjuCalls && await window.SanjuCalls.handleText(text)) return; } catch (_) {}
     const skillMatch = text.match(/(?:add|create|যোগ|অ্যাড|তৈরি)\s+(?:a\s+)?(?:new\s+)?skill\s*(?:called|named|নাম)?\s*[:：-]?\s*(.+)$/i);
     if (skillMatch) {
       const name = skillMatch[1].trim();
@@ -2252,6 +2255,8 @@
     masterVision: () => masterVision(),
     analyzeVisionFile: (f) => analyzeVisionFile(f),
     escapeHtml: (t) => escapeHtml(t),
+    openModal: (id) => openModal(id),
+    closeModal: (id) => closeModal(id),
   };
 
   if (document.readyState === "loading") {

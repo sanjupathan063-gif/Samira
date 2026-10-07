@@ -1,3 +1,4 @@
+import { registerDependency } from './cognitiveCore';
 export type SkillAction = 'SPEAK' | 'OPEN_APP' | 'NOTE' | 'REMINDER' | 'SYSTEM_STATUS';
 export type Skill = {
   id: string;
@@ -53,6 +54,7 @@ export const SkillManager = {
     const now = new Date().toISOString();
     const skill: Skill = { id:`skill.user.${Date.now()}`, name, description, triggers, action, version:1, source:'ai', enabled:true, createdAt:now, updatedAt:now };
     write([skill, ...read()].slice(0,100));
+    registerDependency(skill.id, action === 'OPEN_APP' ? ['PhoneControl'] : action === 'REMINDER' ? ['Scheduler'] : []);
     return { skill, created:true, message:`${name} skill added safely as a declarative skill.` };
   },
   disable(id: string) { write(read().map(s => s.id === id ? {...s, enabled:false, updatedAt:new Date().toISOString()} : s)); },

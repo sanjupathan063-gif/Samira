@@ -170,3 +170,6 @@ Android পারমিশন (কল আর SMS) চাইবে, সেটা 
 ## Build
 
 GitHub Actions `package-lock.json` যাচাই করে `npm ci`, Capacitor Android project generation, native patches এবং debug APK build করে artifact upload করে।
+
+## SANJU Cognitive Core 4.1
+Adds resumable task state, risk-aware execution, dependency registry, action journal, recovery/rollback helpers, resource-aware execution mode and preference memory. Call Assistant is optimized with TTS prewarm and zero-delay post-answer greeting.

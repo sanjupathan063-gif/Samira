@@ -338,6 +338,9 @@ public class WakeWordService extends Service {
         if (command == null) return;
         lastWakeAt = now;
 
+        // Call Assistant: while a call is ringing/active, "call কেটে দাও" / "call ধরো" is handled natively.
+        if (CallStateReceiver.handleVoiceCommand(this, command)) return;
+
         getSharedPreferences(PREFS, MODE_PRIVATE).edit()
             .putString("pending_command", command)
             .putLong("pending_at", now)

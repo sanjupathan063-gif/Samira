@@ -30,6 +30,7 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(WakeWordPlugin.class);
         registerPlugin(SanjuSchedulerPlugin.class);
         registerPlugin(AccessibilityControlPlugin.class);
+        registerPlugin(CallAssistantPlugin.class);
         super.onCreate(savedInstanceState);
 
         if (Build.VERSION.SDK_INT >= 33) {

@@ -30,7 +30,7 @@ jobs:
         run: npm install --no-audit --no-fund
 
       - name: Build web assets (prebuilt www is the source of truth)
-        run: test -f www/index.html && test -f www/app.js && test -f www/sanju-core.js && test -f www/persona.css && node --check www/app.js && node --check www/sanju-core.js
+        run: test -f www/index.html && test -f www/app.js && test -f www/sanju-core.js && test -f www/persona.css && test -f www/call-assistant.js && test -f www/call-assistant.css && node --check www/app.js && node --check www/sanju-core.js && node --check www/call-assistant.js
 
       - name: Add Android platform (fresh)
         run: |
