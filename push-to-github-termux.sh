@@ -8,6 +8,6 @@ git add -A
 if git diff --cached --quiet; then
   echo "কোনো নতুন পরিবর্তন নেই।"
 else
-  git commit -m "Update SANJU app v3.3.1"
+  git commit -m "Update SANJU app v4.4.0"
 fi
 git push -u origin "$BRANCH"

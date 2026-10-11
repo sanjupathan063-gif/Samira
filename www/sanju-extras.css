@@ -1,0 +1,48 @@
+/* SANJU Extras v4.3 + Message History */
+.extras-modal { max-height: 88vh; overflow-y: auto; }
+.extras-modal details { border: 1px solid var(--edge); background: rgba(255,255,255,.03); margin: 8px 0; padding: 0 12px; }
+.extras-modal summary { cursor: pointer; padding: 11px 0; font-weight: 600; color: var(--cyan); list-style: none; }
+.extras-modal summary::-webkit-details-marker { display: none; }
+.extras-modal summary b { color: var(--muted); font-weight: 500; margin-left: 6px; }
+.extras-modal details[open] { padding-bottom: 10px; }
+.extras-modal select, .extras-modal input[type="password"], .extras-modal textarea {
+  width: 100%; box-sizing: border-box; background: rgba(4,5,12,.6); border: 1px solid var(--edge);
+  border-radius: 8px; padding: 10px 12px; color: var(--text); font-family: var(--font-body); margin: 6px 0;
+}
+.extras-modal textarea { resize: vertical; font-size: 12px; }
+.plus-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+.plus-row .btn { flex: 1 1 auto; }
+.plus-list .list-item small { color: var(--muted); display: block; font-size: 11.5px; margin-top: 2px; }
+.plus-btns { display: flex; gap: 6px; }
+.plus-box { padding: 10px; border-left: 2px solid var(--cyan); background: rgba(255,255,255,.04); font-size: 13.5px; line-height: 1.6; }
+.plus-quote { max-height: 28vh; overflow-y: auto; white-space: pre-wrap; margin: 8px 0 12px; }
+.plus-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.extras-lock {
+  position: fixed; inset: 0; z-index: 99999; display: none; align-items: center; justify-content: center;
+  background: var(--bg); padding: 24px;
+}
+.extras-lock-card { width: min(320px, 100%); display: flex; flex-direction: column; gap: 12px; text-align: center; }
+.extras-lock-card input { text-align: center; font-size: 22px; letter-spacing: 6px; padding: 12px; background: rgba(4,5,12,.6); border: 1px solid var(--edge); border-radius: 8px; color: var(--text); }
+.plus-home-row { margin-top: 8px; }
+/* ড্রাইভিং মোড: বড় মাইক, কম ঝামেলা */
+body.sanju-driving #micBtn { transform: scale(1.7); margin: 18px; box-shadow: 0 0 28px var(--cyan-dim); }
+body.sanju-driving .neural-tools, body.sanju-driving .quick-row, body.sanju-driving .persona-controls { opacity: .35; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .extras-modal * { animation: none !important; transition: none !important; } }
+
+/* মেসেজ হিস্টরি */
+.hist-filters { display: flex; flex-direction: column; gap: 4px; margin: 10px 0; }
+.hist-filters input[type="search"] { width: 100%; box-sizing: border-box; background: rgba(4,5,12,.6); border: 1px solid var(--edge); border-radius: 8px; padding: 10px 12px; color: var(--text); font-family: var(--font-body); }
+.hist-warn { padding: 10px 12px; border: 1px solid var(--magenta); background: rgba(255,47,146,.08); margin: 8px 0; font-size: 13.5px; line-height: 1.6; }
+.hist-bad { color: #ffb3b3; }
+.hist-set { border: 1px solid var(--edge); padding: 0 12px; margin: 8px 0; }
+.hist-set summary { cursor: pointer; padding: 10px 0; color: var(--cyan); list-style: none; }
+.hist-item { padding: 10px 12px; margin: 8px 0; background: rgba(255,255,255,.04); border-left: 2px solid var(--cyan); }
+.hist-item.unsent { border-left-color: #ff8a3d; background: rgba(255,138,61,.08); }
+.hist-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.hist-app { font-size: 11px; color: var(--muted); border: 1px solid var(--edge); border-radius: 999px; padding: 1px 8px; white-space: nowrap; }
+.hist-sender { color: var(--muted); display: block; margin-top: 2px; }
+.hist-item p { margin: 6px 0; font-size: 14px; line-height: 1.55; white-space: pre-wrap; word-break: break-word; }
+.hist-bot { display: flex; align-items: center; gap: 10px; }
+.hist-bot small { color: var(--muted); font-size: 11.5px; flex: 1; }
+.hist-flag { font-size: 11.5px; color: #ff8a3d; }
+.neural-tools.ca-row.extras-home-row { grid-template-columns: 1fr 1fr !important; }

@@ -31,6 +31,8 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(SanjuSchedulerPlugin.class);
         registerPlugin(AccessibilityControlPlugin.class);
         registerPlugin(CallAssistantPlugin.class);
+        registerPlugin(NotificationAccessPlugin.class);
+        registerPlugin(MessageHistoryPlugin.class);
         super.onCreate(savedInstanceState);
 
         if (Build.VERSION.SDK_INT >= 33) {

@@ -8,7 +8,7 @@ PATCH_DIR=Path(__file__).resolve().parent
 
 def copy_java_files():
     ANDROID_JAVA_DIR.mkdir(parents=True,exist_ok=True)
-    for filename in ('PhoneControlPlugin.java','VoiceInputPlugin.java','TtsPlugin.java','WakeWordPlugin.java','WakeWordService.java','SanjuSchedulerPlugin.java','AccessibilityControlPlugin.java','SanjuAccessibilityService.java','CallAssistantPlugin.java','CallStateReceiver.java','CallAiSession.java','MainActivity.java'):
+    for filename in ('PhoneControlPlugin.java','VoiceInputPlugin.java','TtsPlugin.java','WakeWordPlugin.java','WakeWordService.java','SanjuSchedulerPlugin.java','AccessibilityControlPlugin.java','SanjuAccessibilityService.java','CallAssistantPlugin.java','CallStateReceiver.java','CallAiSession.java','SanjuNotificationListenerService.java','NotificationAccessPlugin.java','MsgHistoryDb.java','MsgHistoryCapture.java','MessageHistoryPlugin.java','MainActivity.java'):
         shutil.copyfile(PATCH_DIR/filename,ANDROID_JAVA_DIR/filename)
 
 def copy_resources():
@@ -49,6 +49,8 @@ def patch_manifest():
     if 'WakeWordService' not in text: additions+=service
     if 'ReminderReceiver' not in text: additions+=receiver
     if 'SanjuAccessibilityService' not in text: additions+=accessibility
+    notification_service = """        <service android:name=".SanjuNotificationListenerService" android:label="SANJU Notification Reader" android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" android:exported="true">\n            <intent-filter><action android:name="android.service.notification.NotificationListenerService" /></intent-filter>\n        </service>\n"""
+    if 'SanjuNotificationListenerService' not in text: additions+=notification_service
     if additions:
         text=re.sub(r'(</application>)',lambda m: additions+m.group(1),text,count=1)
     MANIFEST_PATH.write_text(text,encoding='utf-8')

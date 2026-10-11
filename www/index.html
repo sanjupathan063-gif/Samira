@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="style.css" />
 <link rel="stylesheet" href="persona.css" />
 <link rel="stylesheet" href="call-assistant.css" />
+<link rel="stylesheet" href="sanju-extras.css" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -170,6 +171,10 @@
         </div>
         <div class="neural-tools ca-row">
           <button id="callAssistBtn" type="button"><span>☎</span><strong>Call Assistant</strong><small id="caHomeState">কে কল করছে বলবে • অটো-অ্যানসার • কল সারাংশ</small></button>
+        </div>
+        <div class="neural-tools ca-row extras-home-row">
+          <button id="histBtn" type="button"><span>🕘</span><strong>মেসেজ হিস্টরি</strong><small id="histHomeState">মুছে ফেললেও থাকবে</small></button>
+          <button id="extrasBtn" type="button"><span>✚</span><strong>এক্সট্রা ফিচার</strong><small>ব্রিফ • রুটিন • খরচ • অ্যাপ লক • ব্যাকআপ</small></button>
         </div>
         <div class="master-task"><span class="master-dot"></span><span>একটা কাজ বলো — SANJU নিজেই ঠিক করবে ভেতরের কোন মডিউল লাগবে</span></div>
       </section>
@@ -471,6 +476,9 @@
   <script src="sanju-cognitive.js"></script>
   <script src="app.js"></script>
   <script src="call-assistant.js"></script>
+  <script src="sanju-history.js"></script>
+  <script src="sanju-extras.js"></script>
+  <script src="sanju-extras-ui.js"></script>
 
   <div class="modal-overlay" id="selfUpgradeModal">
     <div class="modal-card self-upgrade-card">

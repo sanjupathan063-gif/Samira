@@ -646,7 +646,7 @@
         const dataUrl=String(reader.result||"");
         const base64=dataUrl.split(",")[1]; if(!base64) throw new Error("image");
         setMasterState("VISION ANALYZING"); showTyping();
-        const res=await fetch(GROQ_URL,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+settings.apiKey},body:JSON.stringify({model:settings.model||"openai/gpt-oss-20b",messages:[{role:"system",content:"তুমি SANJU Vision Tool। ছবিটি দেখে সংক্ষিপ্ত, নির্ভুল বাংলায় বলো কী দেখা যাচ্ছে। যা নিশ্চিত নও তা অনুমান হিসেবে বলবে।"},{role:"user",content:[{type:"text",text:"এই ছবিটি বিশ্লেষণ করো।"},{type:"image_url",image_url:{url:dataUrl}}]}],temperature:.2,max_tokens:260})});
+        const res=await fetch(GROQ_URL,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+settings.apiKey},body:JSON.stringify({model:settings.visionModel||"meta-llama/llama-4-scout-17b-16e-instruct",messages:[{role:"system",content:"তুমি SANJU Vision Tool। ছবিটি দেখে সংক্ষিপ্ত, নির্ভুল বাংলায় বলো কী দেখা যাচ্ছে। যা নিশ্চিত নও তা অনুমান হিসেবে বলবে।"},{role:"user",content:[{type:"text",text:"এই ছবিটি বিশ্লেষণ করো।"},{type:"image_url",image_url:{url:dataUrl}}]}],temperature:.2,max_tokens:260})});
         hideTyping(); if(!res.ok) throw new Error("vision "+res.status); const d=await res.json(); const reply=d?.choices?.[0]?.message?.content||"ছবিটি বিশ্লেষণ করা গেল না।"; addMessage("bot",reply); speak(reply);
       }catch(e){hideTyping();addMessage("bot","Vision বিশ্লেষণে সমস্যা হয়েছে। তোমার AI model image input সমর্থন করে কি না যাচাই করো।");}
       finally{setMasterState("MASTER AGENT READY");}
@@ -1689,6 +1689,8 @@
      ============================================================ */
   async function handleUserInput(text) {
     text = (text || "").trim();
+    try { if (window.SanjuExtras && await window.SanjuExtras.intercept(text)) return; } catch (e) { console.warn("Extras:", e); }
+    try { if (window.SanjuHistory && await window.SanjuHistory.intercept(text)) return; } catch (e) { console.warn("History:", e); }
     try { if (window.SanjuCognitive && await window.SanjuCognitive.intercept(text)) return; } catch (e) { console.warn("Cognitive Core:", e); }
     // Call Assistant: "call কেটে দাও / call ধরো" while a call is ringing or active
     try { if (window.SanjuCalls && await window.SanjuCalls.handleText(text)) return; } catch (_) {}
@@ -2248,6 +2250,7 @@
     addMessage: (...a) => addMessage(...a),
     speak: (t) => speak(t),
     setMasterState: (t) => setMasterState(t),
+    stopSpeaking: () => stopSpeaking(),
     handleUserInput: (t) => handleUserInput(t),
     openSettings: () => { openSettings(); openModal("settingsModal"); },
     masterRoute: (t) => masterRoute(t),
