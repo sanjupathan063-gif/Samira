@@ -288,6 +288,7 @@
   const GEMINI_TTS_URL =
     "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-tts-preview:generateContent";
   const GEMINI_VOICE = "Kore";
+  function currentGeminiVoice() { try { return (window.SanjuPersona && window.SanjuPersona.voice()) || GEMINI_VOICE; } catch (_) { return GEMINI_VOICE; } }
 
   let activeAudio = null;
   let speechSession = 0;
@@ -372,7 +373,7 @@
     return new Blob([header, pcmBytes], { type: "audio/wav" });
   }
 
-  async function fetchGeminiBlobUrl(text) {
+  async function fetchGeminiBlobUrl(text, voiceOverride) {
     const res = await fetch(GEMINI_TTS_URL, {
       method: "POST",
       headers: {
@@ -383,7 +384,7 @@
         contents: [{ parts: [{ text }] }],
         generationConfig: {
           responseModalities: ["AUDIO"],
-          speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: GEMINI_VOICE } } },
+          speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voiceOverride || currentGeminiVoice() } } },
         },
       }),
     });
@@ -1474,6 +1475,7 @@
     if (memories.length) {
       prompt += `\n\nব্যবহারকারী সম্পর্কে যা মনে রাখা আছে (প্রাসঙ্গিক হলে স্বাভাবিকভাবে ব্যবহার করো, তালিকা করে বলবে না):\n- ${memories.join("\n- ")}`;
     }
+    try { if (window.SanjuPersona) prompt = window.SanjuPersona.adjustPrompt(prompt); } catch (_) {}
     return prompt;
   }
 
@@ -1690,6 +1692,7 @@
   async function handleUserInput(text) {
     text = (text || "").trim();
     try { if (window.SanjuExtras && await window.SanjuExtras.intercept(text)) return; } catch (e) { console.warn("Extras:", e); }
+    try { if (window.SanjuPersona && await window.SanjuPersona.intercept(text)) return; } catch (e) { console.warn("Persona:", e); }
     try { if (window.SanjuHistory && await window.SanjuHistory.intercept(text)) return; } catch (e) { console.warn("History:", e); }
     try { if (window.SanjuCognitive && await window.SanjuCognitive.intercept(text)) return; } catch (e) { console.warn("Cognitive Core:", e); }
     // Call Assistant: "call কেটে দাও / call ধরো" while a call is ringing or active
@@ -2251,6 +2254,15 @@
     speak: (t) => speak(t),
     setMasterState: (t) => setMasterState(t),
     stopSpeaking: () => stopSpeaking(),
+    previewVoice: async (voice, text) => {
+      if (!settings.geminiTtsKey) throw new Error("nokey");
+      stopSpeaking();
+      const url = await fetchGeminiBlobUrl(text || "হ্যালো, আমি তোমার সহকারী। আমার গলাটা কেমন লাগছে?", voice);
+      const a = new Audio(url);
+      a.onended = () => URL.revokeObjectURL(url);
+      await a.play();
+      return true;
+    },
     handleUserInput: (t) => handleUserInput(t),
     openSettings: () => { openSettings(); openModal("settingsModal"); },
     masterRoute: (t) => masterRoute(t),

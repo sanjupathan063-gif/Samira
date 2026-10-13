@@ -33,6 +33,7 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(CallAssistantPlugin.class);
         registerPlugin(NotificationAccessPlugin.class);
         registerPlugin(MessageHistoryPlugin.class);
+        registerPlugin(DeviceStatsPlugin.class);
         super.onCreate(savedInstanceState);
 
         if (Build.VERSION.SDK_INT >= 33) {

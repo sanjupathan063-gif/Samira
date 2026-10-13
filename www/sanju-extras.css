@@ -46,3 +46,27 @@ body.sanju-driving .neural-tools, body.sanju-driving .quick-row, body.sanju-driv
 .hist-bot small { color: var(--muted); font-size: 11.5px; flex: 1; }
 .hist-flag { font-size: 11.5px; color: #ff8a3d; }
 .neural-tools.ca-row.extras-home-row { grid-template-columns: 1fr 1fr !important; }
+
+/* ───── পার্সোনা, থিম ও গেজ ───── */
+.extras-home-row { grid-template-columns: repeat(3, 1fr) !important; }
+.neural-tools.ca-row.extras-home-row { grid-template-columns: repeat(3, 1fr) !important; }
+.hud-gauges { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 8px 0 4px; }
+.hud-ring { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px 4px; border: 1px solid var(--edge-soft); border-radius: 14px; background: rgba(255,255,255,.02); }
+.hud-ring svg { width: 46px; height: 46px; transform: rotate(-90deg); }
+.hud-ring circle { fill: none; stroke-width: 4; }
+.hud-ring .bg { stroke: var(--edge-soft); }
+.hud-ring .fg { stroke: var(--cyan); stroke-linecap: round; transition: stroke-dashoffset .6s ease; filter: drop-shadow(0 0 4px var(--cyan-dim)); }
+.hud-ring b { position: absolute; top: 19px; left: 0; right: 0; text-align: center; font: 600 10.5px var(--font-display, sans-serif); color: var(--text); }
+.hud-ring small { font-size: 9.5px; color: var(--muted); }
+.hud-ring.warn .fg { stroke: #ff5c5c; filter: drop-shadow(0 0 4px rgba(255,92,92,.5)); }
+.hud-ring.warn b { color: #ff9a9a; }
+.ps-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0; }
+.ps-card { position: relative; text-align: left; padding: 10px 12px 10px 16px; border: 1px solid var(--edge-soft); border-radius: 12px; background: rgba(255,255,255,.03); color: var(--text); font-family: var(--font-body); }
+.ps-card i { position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px; border-radius: 3px; background: var(--ps, var(--cyan)); }
+.ps-card b { display: block; font-size: 13px; letter-spacing: .5px; }
+.ps-card small { display: block; color: var(--muted); font-size: 11.5px; margin-top: 2px; line-height: 1.4; }
+.ps-card.on { border-color: var(--ps, var(--cyan)); box-shadow: 0 0 0 1px var(--ps, var(--cyan)) inset; background: rgba(255,255,255,.06); }
+.ps-del { position: absolute; top: 4px; right: 8px; color: var(--muted); font-size: 13px; padding: 2px 4px; }
+.extras-modal label { display: block; margin: 8px 0 2px; font-size: 12.5px; color: var(--muted); }
+.extras-modal input[type="text"], .extras-modal input:not([type]) { width: 100%; box-sizing: border-box; background: rgba(4,5,12,.6); border: 1px solid var(--edge); border-radius: 8px; padding: 10px 12px; color: var(--text); font-family: var(--font-body); }
+.extras-modal label.ca-switch { color: inherit; margin: 6px 0; }

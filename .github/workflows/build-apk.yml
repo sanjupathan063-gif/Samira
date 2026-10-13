@@ -31,7 +31,7 @@ jobs:
 
       - name: Build web assets (prebuilt www is the source of truth)
         run: |
-          for f in index.html app.js sanju-core.js sanju-cognitive.js call-assistant.js sanju-history.js sanju-extras.js sanju-extras-ui.js persona.css call-assistant.css sanju-extras.css; do
+          for f in index.html app.js sanju-core.js sanju-cognitive.js call-assistant.js sanju-history.js sanju-extras.js sanju-extras-ui.js sanju-persona.js persona.css call-assistant.css sanju-extras.css; do
             test -f "www/$f" || { echo "missing www/$f"; exit 1; }
           done
           for f in www/*.js; do node --check "$f"; done
@@ -63,7 +63,7 @@ jobs:
         run: chmod +x android/gradlew
 
       - name: Verify native patch inputs
-        run: test -f native-patches/AccessibilityControlPlugin.java && test -f native-patches/SanjuAccessibilityService.java && test -f native-patches/res/xml/sanju_accessibility_config.xml && test -f native-patches/res/values/sanju_strings.xml && test -f native-patches/MessageHistoryPlugin.java && test -f native-patches/MsgHistoryDb.java && test -f native-patches/MsgHistoryCapture.java
+        run: test -f native-patches/AccessibilityControlPlugin.java && test -f native-patches/SanjuAccessibilityService.java && test -f native-patches/res/xml/sanju_accessibility_config.xml && test -f native-patches/res/values/sanju_strings.xml && test -f native-patches/MessageHistoryPlugin.java && test -f native-patches/MsgHistoryDb.java && test -f native-patches/MsgHistoryCapture.java && test -f native-patches/DeviceStatsPlugin.java
 
       - name: Keep one debug signing key across builds (so updates install over the old app)
         uses: actions/cache@v4
