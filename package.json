@@ -1,6 +1,6 @@
 {
   "name": "sanju-app",
-  "version": "4.4.0",
+  "version": "4.5.0",
   "private": true,
   "description": "SANJU AI assistant - self-evolving Android companion",
   "scripts": {

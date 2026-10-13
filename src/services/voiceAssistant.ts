@@ -259,6 +259,11 @@ class VoiceAssistantService {
     isOnline: boolean,
     lang: Language = 'bn'
   ): Promise<VoiceAnalysisData> {
+    // Deterministic app-aware intents run before cloud analysis so the app name
+    // (YouTube) cannot be mistaken for the content query (e.g. cartoon video).
+    const localFirst = this.parseLocally(transcript, lang);
+    if (localFirst.intent === 'SEARCH_MEDIA') return localFirst;
+
     // 1. If online, attempt AI Gemini deep analysis from server
     if (isOnline) {
       try {
@@ -319,8 +324,20 @@ class VoiceAssistantService {
       sentiment = 'excited';
     }
 
+    // Media search intent: separate the target app (YouTube) from the search phrase.
+    const mentionsYouTube = /youtube|you\s*tube|ইউটিউব|ইউটিউবে|ইউটিউবের|youtub/.test(lower);
+    const asksToPlay = /play|watch|chalao|chalাও|dekhao|dekhte chai|ভিডিও|video|চালাও|চালিয়ে|দেখাও|দেখতে চাই|কার্টুন|cartoon/.test(lower);
+    if (mentionsYouTube && asksToPlay) {
+      const query = text
+        .replace(/youtube|you\s*tube|youtub|ইউটিউব(?:ের|ে)?/ig, ' ')
+        .replace(/(থেকে|একটা|একটি|theke|ekta|ekti|ভিডিও|video|চালাও|চালিয়ে দাও|chalao|দেখাও|dekhao|দেখতে চাই|dekhte chai|play|watch|please|আমাকে|amake|খুঁজে|দাও)/ig, ' ')
+        .replace(/[\s,.!?]+/g, ' ').trim() || 'cartoon video';
+      intent = 'SEARCH_MEDIA';
+      detectedEntities.push('youtube', query);
+      speechResponse = lang === 'bn' ? `YouTube-এ “${query}” খুঁজছি।` : `Searching YouTube for “${query}”.`;
+    }
     // Call intent
-    if (lower.includes('call') || lower.includes('কল') || lower.includes('ফোন') || lower.includes('phone') || lower.includes('dial')) {
+    else if (lower.includes('call') || lower.includes('কল') || lower.includes('ফোন') || lower.includes('phone') || lower.includes('dial')) {
       intent = 'CALL';
       // Identify target: mom, dad, emergency, or person name
       let target = 'মা (Mom)';

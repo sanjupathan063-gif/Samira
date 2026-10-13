@@ -59,7 +59,7 @@ export interface NotificationItem {
 export interface VoiceAnalysisData {
   transcript: string;
   detectedLanguage: 'bn' | 'en' | 'banglish';
-  intent: 'CALL' | 'CREATE_NOTE' | 'CREATE_REMINDER' | 'ENCRYPT_VAULT' | 'QUERY' | 'SYSTEM_CONTROL' | 'UNKNOWN';
+  intent: 'CALL' | 'CREATE_NOTE' | 'CREATE_REMINDER' | 'ENCRYPT_VAULT' | 'QUERY' | 'SYSTEM_CONTROL' | 'SEARCH_MEDIA' | 'UNKNOWN';
   speechResponse: string;
   sentiment: 'calm' | 'excited' | 'urgent' | 'happy' | 'frustrated' | 'neutral';
   urgencyScore: number; // 1 to 10

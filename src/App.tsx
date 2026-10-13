@@ -28,6 +28,8 @@ export default function App() {
   const [pendingSyncCount, setPendingSyncCount] = useState(() => Storage.getSyncPendingCount());
   const [language, setLanguage] = useState<Language>(profile.preferredLanguage || 'bn');
   const [isListening, setIsListening] = useState(false);
+  const [commandInput, setCommandInput] = useState('');
+  const [commandBusy, setCommandBusy] = useState(false);
   const [lastAnalysis, setLastAnalysis] = useState<VoiceAnalysisData | null>(voiceLogs[0] || null);
   const [showPanel, setShowPanel] = useState(false);
   const [callModalOpen, setCallModalOpen] = useState(false);
@@ -48,6 +50,12 @@ export default function App() {
     if (!transcript.trim()) return;
     const analysis = await voiceAssistant.processVoiceCommand(transcript, isOnline, language);
     setLastAnalysis(analysis);
+    setCommandInput('');
+    if (analysis.intent === 'SEARCH_MEDIA') {
+      const query = analysis.detectedEntities[1] || analysis.transcript;
+      const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
     Storage.saveVoiceLog(analysis);
     setVoiceLogs(Storage.getVoiceLogs());
     voiceAssistant.speak(analysis.speechResponse, language);
@@ -73,6 +81,13 @@ export default function App() {
   }, [handleVoiceCommand]);
 
   const toggleMic = (continuous = true) => isListening ? voiceAssistant.stopListening() : voiceAssistant.startListening(continuous);
+
+  const submitTextCommand = async (value = commandInput) => {
+    const command = value.trim();
+    if (!command || commandBusy) return;
+    setCommandBusy(true);
+    try { await handleVoiceCommand(command); } finally { setCommandBusy(false); }
+  };
 
   const setLang = (newLang: Language) => {
     setLanguage(newLang);
@@ -132,7 +147,16 @@ export default function App() {
 
         <section className="command-dock">
           <div className="dock-top"><span><Zap size={14}/> MASTER ROUTER</span><span className={isOnline ? 'pill online-pill' : 'pill'}>{isOnline ? 'ONLINE' : 'LOCAL'}</span></div>
-          <div className="command-line">{lastAnalysis?.transcript || (isBn ? 'বলুন, আমি কাজটি বুঝে সঠিক টুল বেছে নেব…' : 'Speak naturally. I will choose the right tool…')}</div>
+          <div className="command-line">{lastAnalysis?.transcript || (isBn ? 'বলুন বা লিখুন—আমি কাজ বুঝে সঠিক টুল বেছে নেব…' : 'Speak or type naturally. I will choose the right tool…')}</div>
+          <form className="command-input-row" onSubmit={e => { e.preventDefault(); void submitTextCommand(); }}>
+            <input value={commandInput} onChange={e => setCommandInput(e.target.value)} placeholder={isBn ? 'যেমন: YouTube-এ cartoon video চালাও' : 'e.g. Play a cartoon video on YouTube'} aria-label={isBn ? 'কমান্ড লিখুন' : 'Type a command'} />
+            <button type="submit" disabled={!commandInput.trim() || commandBusy}>{commandBusy ? '…' : (isBn ? 'চালাও' : 'GO')}</button>
+          </form>
+          <div className="quick-actions">
+            <button onClick={() => openCall()}><Phone size={14}/>{isBn ? 'কল' : 'Call'}</button>
+            <button onClick={() => setVaultModalOpen(true)}><LockKeyhole size={14}/>{isBn ? 'সিকিউর ভল্ট' : 'Vault'}</button>
+            <button onClick={() => setNotificationsModalOpen(true)}><Bell size={14}/>{isBn ? 'অ্যালার্ট' : 'Alerts'}</button>
+          </div>
           <div className="dock-actions">
             <button onClick={() => toggleMic(profile.continuousListening)} className={isListening ? 'primary-action active' : 'primary-action'}><span className="mic-ring">{isListening ? <MicOff size={19}/> : <Mic size={19}/>}</span>{isListening ? (isBn ? 'শোনা বন্ধ' : 'STOP') : (isBn ? 'কথা বলুন' : 'SPEAK')}</button>
             <button onClick={() => openCall()} className="secondary-action"><Phone size={17}/>{isBn ? 'কল' : 'CALL'}</button>
@@ -142,8 +166,8 @@ export default function App() {
 
         <section className="micro-status">
           <div><Wifi size={14}/><span>{isOnline ? 'NETWORK' : 'OFFLINE'}</span><b>{isOnline ? 'LIVE' : 'LOCAL'}</b></div>
-          <div><Radio size={14}/><span>WAKE WORD</span><b>READY</b></div>
-          <div><HeartPulse size={14}/><span>CORE</span><b>ACTIVE</b></div>
+          <div><Radio size={14}/><span>{isBn ? 'ভয়েস ইঞ্জিন' : 'VOICE ENGINE'}</span><b>{isListening ? (isBn ? 'শুনছে' : 'LISTENING') : 'STANDBY'}</b></div>
+          <div><HeartPulse size={14}/><span>{isBn ? 'স্মৃতি' : 'MEMORY'}</span><b>{voiceLogs.length} {isBn ? 'লগ' : 'LOGS'}</b></div>
         </section>
 
         {lastAnalysis && (
