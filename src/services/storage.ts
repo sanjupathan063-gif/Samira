@@ -17,7 +17,7 @@ export const DEFAULT_PROFILE: UserProfile = {
   name: 'Sanju Pathan',
   email: 'sanju.pthan.no.1@gmail.com',
   phone: '+880 1712-345678',
-  avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
+  avatar: '',
   wakeWord: 'Hey Sanju',
   preferredLanguage: 'bn',
   pinCode: '1234', // default 4-digit PIN for demo

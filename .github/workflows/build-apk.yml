@@ -55,7 +55,7 @@ jobs:
           s = p.read_text()
           import re
           s = re.sub(r'versionCode\s+\d+', 'versionCode ' + str(10000 + ${{ github.run_number }}), s)
-          s = re.sub(r'versionName\s+"[^"]+"', 'versionName "4.4.0"', s)
+          s = re.sub(r'versionName\s+"[^"]+"', 'versionName "4.5.1"', s)
           p.write_text(s)
           PY
 

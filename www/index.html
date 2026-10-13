@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
-<title>SANJU AI 3.4 — One Agent Core</title>
+<title>SANJU AI 4.5.1 — Command Hub</title>
 <link rel="stylesheet" href="style.css" />
 <link rel="stylesheet" href="persona.css" />
 <link rel="stylesheet" href="call-assistant.css" />
@@ -30,7 +30,7 @@
           <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
           <span class="dot"></span>
         </button>
-        <div class="avatar">S</div>
+        <button class="avatar" id="profileBtn" aria-label="প্রোফাইল ও ছবি"><span id="avatarInitial">S</span><img id="avatarImage" alt="প্রোফাইল ছবি" hidden /></button>
       </div>
     </header>
 
@@ -258,6 +258,24 @@
 
   </div>
 
+  <!-- Simple command menu / all extra settings in one place -->
+  <div class="hub-menu-backdrop" id="hubMenuBackdrop"></div>
+  <aside class="hub-menu" id="hubMenu" aria-hidden="true">
+    <div class="hub-menu-head">
+      <div class="hub-menu-mark">S</div>
+      <div><small>SANJU CONTROL</small><h2>মেনু ও সেটিংস</h2><p>সব প্রয়োজনীয় অপশন এক জায়গায়</p></div>
+      <button class="hub-menu-close" id="closeHubMenu" aria-label="মেনু বন্ধ">×</button>
+    </div>
+    <div class="hub-menu-section">দ্রুত কাজ</div>
+    <button class="hub-menu-item" data-hub-action="profile"><span class="hub-menu-icon">◉</span><span><strong>প্রোফাইল ও ছবি</strong><small>নাম, প্রোফাইল ফটো</small></span><b>›</b></button>
+    <button class="hub-menu-item" data-hub-action="settings"><span class="hub-menu-icon">⚙</span><span><strong>AI ও ভয়েস সেটিংস</strong><small>API Key, মডেল, ভাষা, কণ্ঠ</small></span><b>›</b></button>
+    <button class="hub-menu-item" data-hub-action="notes"><span class="hub-menu-icon">▤</span><span><strong>নোট</strong><small>সেভ করা নোট দেখো</small></span><b>›</b></button>
+    <button class="hub-menu-item" data-hub-action="memories"><span class="hub-menu-icon">♡</span><span><strong>স্মৃতি</strong><small>ব্যক্তিগত তথ্য ও মনে রাখা</small></span><b>›</b></button>
+    <button class="hub-menu-item" data-hub-action="scan"><span class="hub-menu-icon">⌁</span><span><strong>সিস্টেম চেক</strong><small>ভয়েস ও সার্ভিস স্ট্যাটাস</small></span><b>›</b></button>
+    <button class="hub-menu-item" data-hub-action="phone"><span class="hub-menu-icon">⌕</span><span><strong>ফোন কন্ট্রোল</strong><small>কল ও ফোন পারমিশন</small></span><b>›</b></button>
+    <div class="hub-menu-footer"><span class="hub-live-dot"></span><span>SANJU CORE</span><small>Command Hub v4.5.1</small></div>
+  </aside>
+
   <!-- Settings modal -->
   <div class="modal-overlay" id="settingsModal">
     <div class="modal reticle">
@@ -267,6 +285,8 @@
       <input type="password" id="apiKeyInput" placeholder="gsk_..." />
       <label for="nameInput">আপনার নাম</label>
       <input type="text" id="nameInput" placeholder="বস" />
+      <label for="profilePhotoInput">প্রোফাইল ফটো (ঐচ্ছিক)</label>
+      <div class="profile-photo-setting"><div class="profile-photo-preview" id="profilePhotoPreview"><span id="settingsAvatarInitial">S</span><img id="settingsAvatarImage" alt="প্রোফাইল প্রিভিউ" hidden /></div><div class="profile-photo-controls"><input type="file" id="profilePhotoInput" accept="image/*" /><button class="btn ghost small-btn" type="button" id="removeProfilePhoto">ছবি সরাও</button><small>গ্যালারি থেকে ছবি বেছে নাও। ছবি ফোনেই সেভ হবে।</small></div></div>
       <label for="modelInput">Groq মডেল</label>
       <input type="text" id="modelInput" placeholder="openai/gpt-oss-120b" />
       <label for="voiceLangSelect">কথা বলার ভাষা (TTS)</label>

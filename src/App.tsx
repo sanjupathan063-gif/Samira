@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Activity, Bell, Bot, ChevronDown, ChevronUp, Globe2, HeartPulse, History,
-  Home, LockKeyhole, Mic, MicOff, Phone, Radio, Settings, ShieldCheck,
+  Home, LockKeyhole, Menu, Mic, MicOff, Phone, Radio, Settings, ShieldCheck,
   Sparkles, UserRound, Volume2, Wifi, WifiOff, X, Zap, BrainCircuit
 } from 'lucide-react';
 import { VoiceCommander } from './components/VoiceCommander';
@@ -118,21 +118,32 @@ export default function App() {
       <div className="aurora aurora-a" /><div className="aurora aurora-b" />
 
       <header className="neural-header">
-        <div className="brand-lockup">
-          <div className="brand-orb"><Sparkles size={17} /></div>
-          <div><div className="brand-name">SANJU</div><div className="brand-sub">NEURAL COMPANION</div></div>
+        <div className="header-start">
+          <button className="icon-btn menu-trigger" onClick={openPanel} aria-label={isBn ? 'মেনু খুলুন' : 'Open menu'}><Menu size={21}/></button>
+          <div className="brand-lockup">
+            <div className="brand-orb"><Sparkles size={17} /></div>
+            <div><div className="brand-name">SANJU</div><div className="brand-sub">NEURAL COMPANION</div></div>
+          </div>
         </div>
         <div className="header-actions">
-          <button className="icon-btn" onClick={() => setProfileModalOpen(true)} aria-label="Profile"><UserRound size={18}/></button>
+          <button className="icon-btn profile-trigger" onClick={() => setProfileModalOpen(true)} aria-label="Profile">
+            {profile.avatar ? <img src={profile.avatar} alt="Profile" /> : <span>{(profile.name || 'S').trim().charAt(0).toUpperCase()}</span>}
+          </button>
           <button className="icon-btn" onClick={() => setNotificationsModalOpen(true)} aria-label="Notifications"><Bell size={18}/>{unreadCount > 0 && <i className="notify-dot"/>}</button>
         </div>
       </header>
 
       <main className="neural-main">
         <section className="identity">
-          <div className="eyebrow">{greeting},</div>
-          <h1>{profile.name || (isBn ? 'বন্ধু' : 'Friend')}</h1>
-          <div className="online-line"><span className={isOnline ? 'status-dot online' : 'status-dot'} />{isOnline ? (isBn ? 'অনলাইন' : 'ONLINE') : (isBn ? 'অফলাইন মোড' : 'OFFLINE MODE')}</div>
+          <div className="identity-copy">
+            <div className="eyebrow">{greeting},</div>
+            <h1>{profile.name || (isBn ? 'বন্ধু' : 'Friend')}</h1>
+            <div className="online-line"><span className={isOnline ? 'status-dot online' : 'status-dot'} />{isOnline ? (isBn ? 'সিস্টেম প্রস্তুত' : 'SYSTEM READY') : (isBn ? 'অফলাইন মোড' : 'OFFLINE MODE')}</div>
+          </div>
+          <button className="identity-profile" onClick={() => setProfileModalOpen(true)} aria-label={isBn ? 'প্রোফাইল বদলান' : 'Edit profile'}>
+            {profile.avatar ? <img src={profile.avatar} alt="" /> : <span>{(profile.name || 'S').trim().charAt(0).toUpperCase()}</span>}
+            <small>{isBn ? 'প্রোফাইল' : 'PROFILE'}</small>
+          </button>
         </section>
 
         <section className={`neural-core-wrap ${isListening ? 'is-listening' : ''}`}>
@@ -146,7 +157,7 @@ export default function App() {
         </section>
 
         <section className="command-dock">
-          <div className="dock-top"><span><Zap size={14}/> MASTER ROUTER</span><span className={isOnline ? 'pill online-pill' : 'pill'}>{isOnline ? 'ONLINE' : 'LOCAL'}</span></div>
+          <div className="dock-top"><span><Zap size={14}/> {isBn ? 'কমান্ড হাব' : 'COMMAND HUB'}</span><span className={isOnline ? 'pill online-pill' : 'pill'}>{isOnline ? (isBn ? 'অনলাইন' : 'ONLINE') : (isBn ? 'লোকাল' : 'LOCAL')}</span></div>
           <div className="command-line">{lastAnalysis?.transcript || (isBn ? 'বলুন বা লিখুন—আমি কাজ বুঝে সঠিক টুল বেছে নেব…' : 'Speak or type naturally. I will choose the right tool…')}</div>
           <form className="command-input-row" onSubmit={e => { e.preventDefault(); void submitTextCommand(); }}>
             <input value={commandInput} onChange={e => setCommandInput(e.target.value)} placeholder={isBn ? 'যেমন: YouTube-এ cartoon video চালাও' : 'e.g. Play a cartoon video on YouTube'} aria-label={isBn ? 'কমান্ড লিখুন' : 'Type a command'} />
@@ -180,12 +191,12 @@ export default function App() {
       {showPanel && <div className="sheet-backdrop" onClick={() => setShowPanel(false)} />}
       <aside className={`neural-sheet ${showPanel ? 'open' : ''}`} aria-hidden={!showPanel}>
         <div className="sheet-handle" />
-        <div className="sheet-head"><div><small>NEURAL CONTROL</small><h2>{isBn ? 'সিস্টেম' : 'System'}</h2></div><button className="icon-btn" onClick={() => setShowPanel(false)}><X size={18}/></button></div>
+        <div className="sheet-head"><div><small>{isBn ? 'SANJU কন্ট্রোল সেন্টার' : 'SANJU CONTROL CENTER'}</small><h2>{isBn ? 'মেনু ও সেটিংস' : 'Menu & Settings'}</h2><p className="sheet-subtitle">{isBn ? 'যা দরকার, এক জায়গায়' : 'Everything important in one place'}</p></div><button className="icon-btn" onClick={() => setShowPanel(false)} aria-label="Close menu"><X size={18}/></button></div>
         <div className="sheet-grid">
           <button onClick={() => openCall()}><Phone/><span>{isBn ? 'কল' : 'Call'}</span><small>Native</small></button>
           <button onClick={() => setNotificationsModalOpen(true)}><Bell/><span>{isBn ? 'অ্যালার্ট' : 'Alerts'}</span><small>{unreadCount} new</small></button>
           <button onClick={() => setVaultModalOpen(true)}><LockKeyhole/><span>{isBn ? 'সিকিউর ভল্ট' : 'Secure Vault'}</span><small>{vaultItems.length} items</small></button>
-          <button onClick={() => setProfileModalOpen(true)}><Settings/><span>{isBn ? 'সেটিংস' : 'Settings'}</span><small>Profile</small></button>
+          <button onClick={() => setProfileModalOpen(true)}><Settings/><span>{isBn ? 'প্রোফাইল ও সেটিংস' : 'Profile & Settings'}</span><small>{isBn ? 'নাম, ছবি, ভাষা' : 'Name, photo, language'}</small></button>
           <button onClick={() => setAnalysisModalOpen(true)}><Activity/><span>{isBn ? 'ভয়েস লগ' : 'Voice Logs'}</span><small>{voiceLogs.length}</small></button>
           <button onClick={() => setSelfUpgradeOpen(true)}><BrainCircuit/><span>{isBn ? 'Self Upgrade' : 'Self Upgrade'}</span><small>Skills + Health</small></button>
           <button onClick={() => setLang(language === 'bn' ? 'en' : 'bn')}><Globe2/><span>Language</span><small>{language.toUpperCase()}</small></button>

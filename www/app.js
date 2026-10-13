@@ -92,6 +92,42 @@
     }
   }
   function saveSettings() { saveJSON(LS.settings, settings); }
+
+  function renderProfileAvatar() {
+    const avatar = settings.userAvatar === undefined ? "assets/sanju-profile.jpg" : String(settings.userAvatar || "");
+    const initial = String(settings.userName || "S").trim().charAt(0).toUpperCase() || "S";
+    const img = $("avatarImage"), text = $("avatarInitial");
+    if (img) { if (avatar) { img.src = avatar; img.hidden = false; } else { img.removeAttribute("src"); img.hidden = true; } }
+    if (text) { text.textContent = initial; text.hidden = !!avatar; }
+    const preview = $("settingsAvatarImage"), previewInitial = $("settingsAvatarInitial");
+    if (preview) { if (avatar) { preview.src = avatar; preview.hidden = false; } else { preview.removeAttribute("src"); preview.hidden = true; } }
+    if (previewInitial) { previewInitial.textContent = initial; previewInitial.hidden = !!avatar; }
+  }
+
+  function compressProfilePhoto(file) {
+    return new Promise((resolve, reject) => {
+      if (!file || !file.type || !file.type.startsWith("image/")) return reject(new Error("একটি ছবি নির্বাচন করো।"));
+      if (file.size > 12 * 1024 * 1024) return reject(new Error("ছবিটি ১২ MB-এর কম হতে হবে।"));
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error("ছবি পড়া যায়নি।"));
+      reader.onload = () => {
+        const img = new Image();
+        img.onerror = () => reject(new Error("ছবিটি খোলা যায়নি।"));
+        img.onload = () => {
+          const max = 512, scale = Math.min(1, max / Math.max(img.naturalWidth || img.width, img.naturalHeight || img.height));
+          const canvas = document.createElement("canvas");
+          canvas.width = Math.max(1, Math.round((img.naturalWidth || img.width) * scale));
+          canvas.height = Math.max(1, Math.round((img.naturalHeight || img.height) * scale));
+          const ctx = canvas.getContext("2d");
+          if (!ctx) return reject(new Error("ছবি প্রসেস করা যায়নি।"));
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL("image/jpeg", 0.76));
+        };
+        img.src = String(reader.result || "");
+      };
+      reader.readAsDataURL(file);
+    });
+  }
   function saveHistory() { saveJSON(LS.history, history); }
   function saveNotes() { saveJSON(LS.notes, notes); }
   function saveMemories() { saveJSON(LS.memories, memories); }
@@ -1940,6 +1976,30 @@
      ইভেন্ট বাইন্ডিং
      ============================================================ */
   function bindEvents() {
+    const hubMenu = $("hubMenu"), hubBackdrop = $("hubMenuBackdrop");
+    const closeHubMenu = () => { hubMenu?.classList.remove("open"); hubBackdrop?.classList.remove("open"); hubMenu?.setAttribute("aria-hidden", "true"); };
+    const openHubMenu = () => { hubMenu?.classList.add("open"); hubBackdrop?.classList.add("open"); hubMenu?.setAttribute("aria-hidden", "false"); };
+    $("menuBtn")?.addEventListener("click", openHubMenu);
+    $("closeHubMenu")?.addEventListener("click", closeHubMenu);
+    hubBackdrop?.addEventListener("click", closeHubMenu);
+    $("profileBtn")?.addEventListener("click", () => { closeHubMenu(); openSettings(); });
+    document.querySelectorAll("[data-hub-action]").forEach(btn => btn.addEventListener("click", () => {
+      const action = btn.getAttribute("data-hub-action"); closeHubMenu();
+      if (action === "profile" || action === "settings") openSettings();
+      else if (action === "notes") { renderNotes(); openModal("notesModal"); }
+      else if (action === "memories") { renderMemories(); openModal("memoriesModal"); }
+      else if (action === "scan") { openModal("scanModal"); runScan(); }
+      else if (action === "phone") { const callModal = $("callAssistModal"); if (callModal) openModal("callAssistModal"); else { addMessage("bot", "ফোন কন্ট্রোলের জন্য কল কমান্ড ব্যবহার করো বা প্রয়োজনীয় Android permission চালু করো।"); } }
+    }));
+    document.addEventListener("keydown", e => { if (e.key === "Escape") closeHubMenu(); });
+    $("profilePhotoInput")?.addEventListener("change", async e => {
+      const file = e.target.files && e.target.files[0]; if (!file) return;
+      try { settings.userAvatar = await compressProfilePhoto(file); renderProfileAvatar(); saveSettings(); }
+      catch (err) { alert((err && err.message) || "ছবি যোগ করা যায়নি।"); }
+    });
+    $("removeProfilePhoto")?.addEventListener("click", () => {
+      settings.userAvatar = ""; if ($("profilePhotoInput")) $("profilePhotoInput").value = ""; renderProfileAvatar(); saveSettings();
+    });
     // Self-Evolving Skill Registry: safe declarative skills, no arbitrary code execution.
     const SKILL_KEY = "sanju_dynamic_skills_v1";
     const builtinSkills = [
@@ -2112,6 +2172,7 @@
       settings.haFanEntity = $("haFanInput")?.value.trim() || "";
       settings.haAcEntity = $("haAcInput")?.value.trim() || "";
       saveSettings();
+      renderProfileAvatar();
       setWakeEnabled(settings.wakeEnabled);
       try{ if(WakeWord && WakeWord.configure) WakeWord.configure({silent:settings.beepOff!==false, slow:!!settings.wakeSlow}); }catch(_){}
       try{ window.dispatchEvent(new CustomEvent("sanjuSettingsChanged")); }catch(_){}
@@ -2160,6 +2221,8 @@
   function openSettings() {
     $("apiKeyInput").value = settings.apiKey || "";
     $("nameInput").value = settings.userName || "";
+    if ($("profilePhotoInput")) $("profilePhotoInput").value = "";
+    renderProfileAvatar();
     $("modelInput").value = settings.model || "";
     $("voiceLangSelect").value = settings.voiceLang || "auto";
     if($("voiceStyleSelect")) $("voiceStyleSelect").value = settings.voiceStyle || "cinematic";
@@ -2201,6 +2264,7 @@
      ============================================================ */
   function init() {
     setGreeting();
+    renderProfileAvatar();
     setOrbState("প্রস্তুত আছি", "idle");
     renderNotes();
     renderMemories();

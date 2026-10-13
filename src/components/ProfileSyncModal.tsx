@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   X,
   User,
@@ -45,12 +45,64 @@ export const ProfileSyncModal: React.FC<ProfileSyncModalProps> = ({
 
   // Form states
   const [name, setName] = useState(profile.name);
+  const [avatar, setAvatar] = useState(profile.avatar || '');
+  const avatarInputRef = useRef<HTMLInputElement>(null);
   const [email, setEmail] = useState(profile.email);
   const [phone, setPhone] = useState(profile.phone);
   const [wakeWord, setWakeWord] = useState(profile.wakeWord);
   const [pinCode, setPinCode] = useState(profile.pinCode);
   const [emergencyName, setEmergencyName] = useState(profile.emergencyContact.name);
   const [emergencyPhone, setEmergencyPhone] = useState(profile.emergencyContact.phone);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    setName(profile.name || '');
+    setAvatar(profile.avatar || '');
+    setEmail(profile.email || '');
+    setPhone(profile.phone || '');
+    setWakeWord(profile.wakeWord || 'Hey Sanju');
+    setPinCode(profile.pinCode || '');
+    setEmergencyName(profile.emergencyContact?.name || '');
+    setEmergencyPhone(profile.emergencyContact?.phone || '');
+  }, [isOpen, profile]);
+
+  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      setSyncFeedback({ text: isBn ? 'একটি ছবি নির্বাচন করুন।' : 'Please choose an image file.', error: true });
+      event.target.value = '';
+      return;
+    }
+    if (file.size > 12 * 1024 * 1024) {
+      setSyncFeedback({ text: isBn ? 'ছবিটি ১২ MB-এর কম হতে হবে।' : 'Image must be smaller than 12 MB.', error: true });
+      event.target.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const image = new Image();
+      image.onload = () => {
+        const maxEdge = 640;
+        const scale = Math.min(1, maxEdge / Math.max(image.width, image.height));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.round(image.width * scale));
+        canvas.height = Math.max(1, Math.round(image.height * scale));
+        const context = canvas.getContext('2d');
+        if (!context) {
+          setSyncFeedback({ text: isBn ? 'ছবি প্রসেস করা যায়নি।' : 'Could not process image.', error: true });
+          return;
+        }
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        setAvatar(canvas.toDataURL('image/jpeg', 0.78));
+        setSyncFeedback({ text: isBn ? 'ছবি যোগ হয়েছে—সেভ করুন।' : 'Photo added—save your profile.' });
+      };
+      image.onerror = () => setSyncFeedback({ text: isBn ? 'এই ছবি খোলা যায়নি।' : 'Could not open this image.', error: true });
+      image.src = String(reader.result || '');
+    };
+    reader.onerror = () => setSyncFeedback({ text: isBn ? 'ছবি পড়া যায়নি।' : 'Could not read image.', error: true });
+    reader.readAsDataURL(file);
+  };
 
   // Sync states
   const [isSyncing, setIsSyncing] = useState(false);
@@ -63,6 +115,7 @@ export const ProfileSyncModal: React.FC<ProfileSyncModalProps> = ({
     const updated: UserProfile = {
       ...profile,
       name,
+      avatar,
       email,
       phone,
       wakeWord,
@@ -220,19 +273,15 @@ export const ProfileSyncModal: React.FC<ProfileSyncModalProps> = ({
             )}
 
             <div className="flex items-center gap-4 p-3 rounded-2xl bg-slate-950/60 border border-slate-800">
-              <div className="w-14 h-14 rounded-2xl overflow-hidden bg-indigo-600 flex items-center justify-center text-white font-bold text-lg ring-2 ring-indigo-500/30">
-                {profile.avatar ? (
-                  <img src={profile.avatar} alt={profile.name} className="w-full h-full object-cover" />
-                ) : (
-                  profile.name.charAt(0)
-                )}
-              </div>
-              <div className="flex-1">
-                <p className="text-xs font-bold text-white">{name}</p>
-                <p className="text-[11px] text-slate-400">{email}</p>
-                <span className="text-[10px] text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 mt-1 inline-block">
-                  Verified Local Account
-                </span>
+              <button type="button" onClick={() => avatarInputRef.current?.click()} className="profile-photo-pick w-16 h-16 rounded-2xl overflow-hidden bg-indigo-600 flex-shrink-0 flex items-center justify-center text-white font-bold text-xl ring-2 ring-cyan-400/30" aria-label={isBn ? 'প্রোফাইল ছবি বাছুন' : 'Choose profile photo'}>
+                {avatar ? <img src={avatar} alt={name || 'Profile'} className="w-full h-full object-cover" /> : <User className="w-6 h-6" />}
+                <span className="photo-pick-overlay"><span>＋</span></span>
+              </button>
+              <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} aria-label={isBn ? 'গ্যালারি থেকে ছবি বাছুন' : 'Choose image from gallery'} />
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold text-white">{name || (isBn ? 'আপনার নাম' : 'Your name')}</p>
+                <p className="text-[11px] text-slate-400">{isBn ? 'ছবিতে চাপ দিয়ে গ্যালারি থেকে বাছুন' : 'Tap photo to choose from gallery'}</p>
+                <button type="button" onClick={() => { setAvatar(''); if (avatarInputRef.current) avatarInputRef.current.value = ''; }} className="text-[10px] text-cyan-300 mt-1">{isBn ? 'ছবি সরান' : 'Remove photo'}</button>
               </div>
             </div>
 
