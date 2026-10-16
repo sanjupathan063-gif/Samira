@@ -1727,6 +1727,7 @@
      ============================================================ */
   async function handleUserInput(text) {
     text = (text || "").trim();
+    try { if (window.SanjuWelcome && await window.SanjuWelcome.intercept(text)) return; } catch (e) { console.warn("Welcome:", e); }
     try { if (window.SanjuExtras && await window.SanjuExtras.intercept(text)) return; } catch (e) { console.warn("Extras:", e); }
     try { if (window.SanjuPersona && await window.SanjuPersona.intercept(text)) return; } catch (e) { console.warn("Persona:", e); }
     try { if (window.SanjuHistory && await window.SanjuHistory.intercept(text)) return; } catch (e) { console.warn("History:", e); }
@@ -2318,6 +2319,8 @@
     speak: (t) => speak(t),
     setMasterState: (t) => setMasterState(t),
     stopSpeaking: () => stopSpeaking(),
+    isSpeaking: () => !!speechBusy,
+    startListening: () => startListening(),
     previewVoice: async (voice, text) => {
       if (!settings.geminiTtsKey) throw new Error("nokey");
       stopSpeaking();

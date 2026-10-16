@@ -8,7 +8,7 @@ PATCH_DIR=Path(__file__).resolve().parent
 
 def copy_java_files():
     ANDROID_JAVA_DIR.mkdir(parents=True,exist_ok=True)
-    for filename in ('PhoneControlPlugin.java','VoiceInputPlugin.java','TtsPlugin.java','WakeWordPlugin.java','WakeWordService.java','SanjuSchedulerPlugin.java','AccessibilityControlPlugin.java','SanjuAccessibilityService.java','CallAssistantPlugin.java','CallStateReceiver.java','CallAiSession.java','SanjuNotificationListenerService.java','NotificationAccessPlugin.java','MsgHistoryDb.java','MsgHistoryCapture.java','MessageHistoryPlugin.java','DeviceStatsPlugin.java','MainActivity.java'):
+    for filename in ('PhoneControlPlugin.java','VoiceInputPlugin.java','TtsPlugin.java','WakeWordPlugin.java','WakeWordService.java','SanjuSchedulerPlugin.java','AccessibilityControlPlugin.java','SanjuAccessibilityService.java','CallAssistantPlugin.java','CallStateReceiver.java','CallAiSession.java','SanjuNotificationListenerService.java','NotificationAccessPlugin.java','MsgHistoryDb.java','MsgHistoryCapture.java','MessageHistoryPlugin.java','DeviceStatsPlugin.java','SmsSummaryPlugin.java','MainActivity.java'):
         shutil.copyfile(PATCH_DIR/filename,ANDROID_JAVA_DIR/filename)
 
 def copy_resources():
@@ -29,6 +29,8 @@ def patch_manifest():
         '    <uses-permission android:name="android.permission.READ_CALL_LOG" />\n'
         '    <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS" />\n'
     )
+    if 'android.permission.READ_SMS' not in text:
+        text=re.sub(r'(<manifest[^>]*>\n)',lambda m: m.group(1)+'    <uses-permission android:name="android.permission.READ_SMS" />\n',text,count=1)
     if 'android.permission.ANSWER_PHONE_CALLS' not in text:
         text=re.sub(r'(<manifest[^>]*>\n)',lambda m: m.group(1)+call_perms,text,count=1)
     queries='''    <queries>\n        <intent>\n            <action android:name="android.intent.action.MAIN" />\n            <category android:name="android.intent.category.LAUNCHER" />\n        </intent>\n    </queries>\n'''

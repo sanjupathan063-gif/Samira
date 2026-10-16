@@ -18,10 +18,11 @@
       <h2>এক্সট্রা ফিচার</h2>
       <p class="hint-text">কমান্ড ভয়েসে বা লিখেও বলা যায়। উদাহরণ প্রতিটি অংশে দেওয়া আছে।</p>
 
-      <details open><summary>দৈনিক ব্রিফ</summary>
-        <p class="hint-text">তারিখ, আবহাওয়া, আজকের রিমাইন্ডার ও খরচ একসাথে। বলো: “আজকের ব্রিফ”।</p>
+      <details open><summary>স্বাগত ও ব্রিফ</summary>
+        <p class="hint-text">আবহাওয়া, শীর্ষ খবর আর মেসেজের হিসাব একসাথে। বলো: “আজকের ব্রিফ”। খবর চাইতে: “আজকের নিউজ” বা “… নিয়ে খবর বলো”।</p>
         <div class="plus-row"><button class="btn primary" id="plusBriefNow">এখন শোনাও</button></div>
-        <label class="ca-switch"><input type="checkbox" id="plusAutoBrief"/><span>রোজ সকালে অ্যাপ খুললে নিজে শোনাবে</span></label>
+        <label class="ca-switch"><input type="checkbox" id="plusWelcomeOn"/><span>অ্যাপ খুললে সালাম দেবে</span></label>
+        <label class="ca-switch"><input type="checkbox" id="plusWelcomeMic"/><span>সালামের পর মাইক নিজে চালু হবে (উত্তর দিলে আবহাওয়া, খবর, মেসেজের হিসাব)</span></label>
       </details>
 
       <details><summary>রুটিন <b id="plusRoutCount"></b></summary>
@@ -68,7 +69,8 @@
   function render() {
     const sp = SP(); if (!sp) return;
     const c = sp.cfg();
-    $("plusAutoBrief").checked = !!c.autoBrief; $("plusGeoOn").checked = c.geoOn !== false;
+    const wc = window.SanjuWelcome ? window.SanjuWelcome.cfg() : { on: true, mic: true };
+    $("plusWelcomeOn").checked = !!wc.on; $("plusWelcomeMic").checked = !!wc.mic; $("plusGeoOn").checked = c.geoOn !== false;
     $("plusDriving").checked = !!c.driving; $("plusTrans").value = c.translateTo || "";
     const rs = sp.getRoutines(); $("plusRoutCount").textContent = rs.length ? `(${bn(rs.length)})` : "";
     $("plusRoutList").innerHTML = rs.length ? rs.map((r, i) => `<div class="list-item"><span><b>${esc(r.name)}</b><small> ${esc(r.steps.join(" → "))}</small></span><span class="plus-btns"><button class="del-btn" data-run="${i}" aria-label="চালাও">▶</button><button class="del-btn" data-rout="${i}" aria-label="মুছো">✕</button></span></div>`).join("") : '<p class="hint-text">কোনো রুটিন নেই।</p>';
@@ -92,7 +94,8 @@
     const chg = (id, fn) => { const el = $(id); if (el) el.addEventListener("change", fn); };
     on("plusClose", () => close("extrasModal"));
     on("plusBriefNow", () => { close("extrasModal"); SP().brief(); });
-    chg("plusAutoBrief", (e) => SP().setCfg({ autoBrief: e.target.checked }));
+    chg("plusWelcomeOn", (e) => window.SanjuWelcome && window.SanjuWelcome.setCfg({ on: e.target.checked }));
+    chg("plusWelcomeMic", (e) => window.SanjuWelcome && window.SanjuWelcome.setCfg({ mic: e.target.checked }));
     chg("plusGeoOn", (e) => { SP().setCfg({ geoOn: e.target.checked }); e.target.checked ? SP().startWatch() : SP().stopWatch(); });
     chg("plusDriving", (e) => SP().setDriving(e.target.checked));
     chg("plusTrans", (e) => { SP().setCfg({ translateTo: e.target.value }); });
